@@ -109,14 +109,18 @@
     <div class="rules">
       <b>Hinweise:</b><br>
       · 10 Aufgaben mit je 4 Antwortmöglichkeiten<br>
-      · <b>Bearbeitungszeit: 25 Minuten</b> – der Timer startet mit Klick auf „Aufgabe starten"<br>
+      · <b>Bearbeitungszeit: 30 Minuten</b> – der Timer startet mit Klick auf „Aufgabe starten"<br>
       · Kein Feedback während der Bearbeitung<br>
       · Keine Zurück-Funktion<br>
-      · Nach der letzten Aufgabe: Ergebnisse werden übermittelt<br>
+      · Nach der letzten Aufgabe (oder bei Zeitablauf): Ergebnisse werden übermittelt<br>
       · Sie erhalten sofort eine Auswertung auf dem Bildschirm
     </div>
+    <div class="mtnr-wrap" style="margin-bottom:10px">
+      <input type="text" id="name-input" placeholder="Vor- und Nachname"
+             style="flex:1;background:#0d1a27;border:1px solid #2a3f56;border-radius:10px;color:var(--text);font-size:15px;padding:12px 14px;font-family:inherit;outline:none" />
+    </div>
     <div class="mtnr-wrap">
-      <input type="text" id="mtnr-input" placeholder="Matrikelnummer (6-stellig)"
+      <input type="text" id="mtnr-input" placeholder="Matrikelnummer (7-stellig)"
              maxlength="7" inputmode="numeric" />
     </div>
     <div style="text-align:center">
@@ -160,7 +164,7 @@
 // ============================================================
 const DOZENT_EMAIL = "a.noyon@th-mannheim.de"; // <- hier Ihre E-Mail eintragen
 const KURS = "QUANT WiSe 2026/27";
-const TIMER_SECONDS = 25 * 60; // 25 Minuten
+const TIMER_SECONDS = 30 * 60; // 30 Minuten
 
 // ============================================================
 let timerInterval = null;
@@ -182,7 +186,7 @@ function startTimer(){
     }
   }, 1000);
   // initial display
-  disp.textContent = "⏱ 25:00";
+  disp.textContent = "⏱ 30:00";
 }
 
 // ============================================================
@@ -454,9 +458,228 @@ const items = [
       "Spearman funktioniert bei beliebigem N. Stichprobengröße ist kein Ausschlusskriterium."
     ]
   }
+  ,{
+    id:"e11",transfer:false,
+    title:"Skalenniveau – Konsequenzen für die Analyse",
+    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Datensatzbeschreibung</div>
+      <div class="ctx">Ein Team analysiert folgende Variablen aus dem Deutschland-Monitor:<br><br>
+        <strong>A)</strong> <em>sex</em>: Geschlecht (1 = männlich, 2 = weiblich)<br>
+        <strong>B)</strong> <em>casmin</em>: Bildungsabschluss (1–9, von kein Abschluss bis Hochschulabschluss)<br>
+        <strong>C)</strong> <em>age_num</em>: Alter in Jahren (metrisch)
+      </div></div>`,
+    question:"Welche Aussage zum Skalenniveau und den Analysemöglichkeiten ist <b>korrekt</b>?",
+    options:[
+      "Alle drei Variablen sind metrisch, da sie als Zahlen codiert sind",
+      "sex ist nominal – ein Mittelwert wäre sinnlos; casmin ist ordinal – Abstände sind nicht gleich; age_num ist metrisch – Mittelwert sinnvoll",
+      "sex und casmin sind ordinal, weil sie geordnete Kategorien haben",
+      "Für alle drei Variablen ist der Mittelwert das geeignete Lagemaß"
+    ],
+    correct:1,
+    feedback:[
+      "Numerische Codierung macht eine Variable nicht metrisch. Geschlecht bleibt nominal, egal ob als 1/2 codiert.",
+      "Richtig. Skalenniveau hängt vom Inhalt ab, nicht von der Codierung. Nominal: nur Kategorien. Ordinal: Rangfolge, aber ungleiche Abstände. Metrisch: gleiche Abstände, Mittelwert sinnvoll.",
+      "sex ist nominal, nicht ordinal – männlich/weiblich hat keine sinnvolle Rangfolge.",
+      "Für nominale Variablen ist der Modus das geeignete Maß, für ordinale der Median, für metrische der Mittelwert."
+    ]
+  },{
+    id:"e12",transfer:false,
+    title:"Boxplot lesen – Median, Quartile, Ausreißer",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Boxplot · Variable age_num (Alter in Jahren)</div>
+      <div class="jmv" style="padding:16px 14px 10px">
+        <svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg"
+             style="width:100%;max-width:420px;display:block;margin:0 auto;font-family:-apple-system,sans-serif">
+          <line x1="60" y1="20" x2="60" y2="172" stroke="#555" stroke-width="1"/>
+          <text x="54" y="176" text-anchor="end" font-size="10" fill="#444">18</text>
+          <text x="54" y="141" text-anchor="end" font-size="10" fill="#444">34</text>
+          <text x="54" y="106" text-anchor="end" font-size="10" fill="#444">51</text>
+          <text x="54" y="83"  text-anchor="end" font-size="10" fill="#444">63</text>
+          <text x="54" y="46"  text-anchor="end" font-size="10" fill="#444">82</text>
+          <line x1="60" y1="176" x2="260" y2="176" stroke="#ddd" stroke-width="0.5"/>
+          <line x1="60" y1="141" x2="260" y2="141" stroke="#ddd" stroke-width="0.5"/>
+          <line x1="60" y1="106" x2="260" y2="106" stroke="#ddd" stroke-width="0.5"/>
+          <line x1="60" y1="83"  x2="260" y2="83"  stroke="#ddd" stroke-width="0.5"/>
+          <line x1="60" y1="46"  x2="260" y2="46"  stroke="#ddd" stroke-width="0.5"/>
+          <line x1="155" y1="176" x2="195" y2="176" stroke="#333" stroke-width="2"/>
+          <line x1="175" y1="141" x2="175" y2="176" stroke="#333" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <rect x="130" y="83" width="90" height="58" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+          <line x1="130" y1="106" x2="220" y2="106" stroke="#1d4ed8" stroke-width="3"/>
+          <line x1="175" y1="46" x2="175" y2="83" stroke="#333" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <line x1="155" y1="46" x2="195" y2="46" stroke="#333" stroke-width="2"/>
+          <circle cx="175" cy="32" r="4" fill="none" stroke="#e11d48" stroke-width="1.5"/>
+          <circle cx="175" cy="24" r="4" fill="none" stroke="#e11d48" stroke-width="1.5"/>
+          <circle cx="175" cy="14" r="4" fill="none" stroke="#e11d48" stroke-width="1.5"/>
+          <text x="230" y="17"  font-size="10" fill="#e11d48">Ausreißer (89, 91, 94 J.)</text>
+          <text x="230" y="49"  font-size="10" fill="#555">Max.-Linie (82 J.)</text>
+          <text x="230" y="86"  font-size="10" fill="#1d4ed8">3. Quartil (63 J.)</text>
+          <text x="230" y="109" font-size="10" fill="#1d4ed8" font-weight="bold">Median (51 J.)</text>
+          <text x="230" y="144" font-size="10" fill="#1d4ed8">1. Quartil (34 J.)</text>
+          <text x="230" y="179" font-size="10" fill="#555">Min.-Linie (18 J.)</text>
+          <text x="175" y="196" text-anchor="middle" font-size="11" fill="#333">age_num</text>
+        </svg>
+      </div></div>`,
+    question:"Was lässt sich aus diesem Boxplot direkt ablesen?",
+    options:[
+      "Das Durchschnittsalter beträgt 51 Jahre",
+      "Die mittleren 50 % der Befragten sind zwischen 34 und 63 Jahre alt; drei Personen haben ein ungewöhnlich hohes Alter",
+      "Die Verteilung ist linksschief, weil der Median näher am 3. Quartil liegt",
+      "Die Ausreißer müssen vor der Analyse entfernt werden"
+    ],
+    correct:1,
+    feedback:[
+      "Der Median (51 J.) ist nicht dasselbe wie der Mittelwert. Der Boxplot zeigt den Median – nicht den Mittelwert.",
+      "Richtig. Die Box enthält immer die mittleren 50 % der Daten (1. bis 3. Quartil). Die roten Kreise markieren Ausreißer – Werte die ungewöhnlich weit außerhalb der übrigen Verteilung liegen.",
+      "Der Median (51) liegt näher am 3. Quartil (63, Abstand 12) als am 1. Quartil (34, Abstand 17) – das deutet eher auf leichte Rechtsschiefe hin, nicht Linksschiefe.",
+      "Ausreißer sind zunächst nur auffällige Werte. Ob sie entfernt werden, hängt vom Kontext ab – zuerst prüfen ob es Eingabefehler oder echte Extremwerte sind."
+    ]
+  },{
+    id:"e13",transfer:false,
+    title:"Stichprobenlogik – Repräsentativität",
+    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Studienbeschreibung</div>
+      <div class="ctx">Für eine Studie zur Demokratiezufriedenheit werden <strong>500 Studierende</strong> der TH Mannheim befragt. Die Ergebnisse werden als repräsentativ für „die deutsche Bevölkerung" dargestellt.</div></div>`,
+    question:"Was ist an dieser Schlussfolgerung <b>problematisch</b>?",
+    options:[
+      "n = 500 ist zu klein – ab n = 1000 darf man auf die Bevölkerung schließen",
+      "Die Stichprobe ist nicht zufällig aus der Zielpopulation gezogen – Studierende sind jünger, gebildeter und städtischer als die Gesamtbevölkerung",
+      "Demokratiezufriedenheit kann nur mit Volksbefragungen gemessen werden",
+      "Gar nichts – 500 Befragte sind immer repräsentativ"
+    ],
+    correct:1,
+    feedback:[
+      "Stichprobengröße allein macht keine Repräsentativität. Eine verzerrte Auswahl bleibt verzerrt, egal wie groß sie ist.",
+      "Richtig. Repräsentativität hängt vom Auswahlverfahren ab, nicht von der Größe. Eine Zufallsstichprobe aus der Zielpopulation wäre nötig.",
+      "Demokratiezufriedenheit kann mit standardisierten Fragebögen in Stichprobenerhebungen gemessen werden – das ist kein methodisches Problem.",
+      "Größe ≠ Repräsentativität. Eine Befragung von einer Million Studierenden wäre immer noch nicht repräsentativ für die Gesamtbevölkerung."
+    ]
+  },{
+    id:"e14",transfer:false,
+    title:"Mittelwert aus Output interpretieren",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik</div>
+      <div class="jmv"><div class="jmv-h">Deskriptivstatistik</div>
+        <table><tr><th></th><th>dem_func</th><th>dem_id</th><th>dem_const</th></tr>
+          <tr><td>N</td><td>3 981</td><td>3 978</td><td>3 963</td></tr>
+          <tr><td>Mittelwert</td><td>2.43</td><td>1.24</td><td>1.98</td></tr>
+          <tr><td>Std.-fehler des Mittelwerts</td><td>0.012</td><td>0.008</td><td>0.012</td></tr>
+          <tr><td>Standardabweichung</td><td>0.754</td><td>0.483</td><td>0.776</td></tr>
+        </table>
+        <div class="ann">Skala jeweils 1–4 · 1 = sehr zufrieden / stimme voll zu · 4 = sehr unzufrieden / stimme gar nicht zu</div>
+      </div></div>`,
+    question:"Welche Variable zeigt die <b>höchste Zufriedenheit</b> in der Stichprobe, und warum?",
+    options:[
+      "dem_func (M = 2.43), weil sie den höchsten Mittelwert hat",
+      "dem_id (M = 1.24), weil sie den niedrigsten Mittelwert hat – auf dieser Skala bedeutet niedriger Wert höhere Zustimmung",
+      "dem_const (M = 1.98), weil ihre Standardabweichung am größten ist",
+      "Das lässt sich nicht sagen, weil die N-Werte unterschiedlich sind"
+    ],
+    correct:1,
+    feedback:[
+      "Achtung: Die Skala ist umgepolt (1 = sehr zufrieden). Ein höherer Mittelwert bedeutet hier weniger Zufriedenheit.",
+      "Richtig. Bei einer Skala von 1 (sehr zufrieden) bis 4 (sehr unzufrieden) zeigt der niedrigste Mittelwert die höchste Zufriedenheit. Immer die Skalenrichtung beachten!",
+      "Die Standardabweichung beschreibt Streuung, nicht Zufriedenheit.",
+      "Unterschiedliche N beeinflussen die Präzision des Mittelwerts (SE), nicht den Mittelwert selbst. Der Vergleich ist trotzdem möglich."
+    ]
+  },{
+    id:"e15",transfer:false,
+    title:"Konfidenzintervall im Output – Präzision einschätzen",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · t-Test (Gruppenvergleich)</div>
+      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
+        <table>
+          <tr><th></th><th>p</th><th>Mittl. Diff.</th><th>95 % KI Unt.</th><th>95 % KI Ob.</th><th>Cohen's d</th></tr>
+          <tr><td>pint</td><td>.003</td><td>0.19</td><td>0.065</td><td>0.315</td><td>0.24</td></tr>
+        </table>
+        <div class="ann">Vergleich: casmin niedrig vs. hoch · pint: Politisches Interesse (invertiert: höher = mehr Interesse)</div>
+      </div></div>`,
+    question:"Was lässt sich aus dem Konfidenzintervall [0.065; 0.315] schließen?",
+    options:[
+      "Das KI ist sehr breit, also ist das Ergebnis nicht signifikant",
+      "Das KI enthält die Null nicht → der Unterschied ist signifikant; die wahre Differenz liegt plausibel zwischen 0.065 und 0.315 Skalenpunkten",
+      "Das KI zeigt, dass 95 % der Befragten Werte zwischen 0.065 und 0.315 haben",
+      "Da beide KI-Grenzen positiv sind, ist der Effekt groß"
+    ],
+    correct:1,
+    feedback:[
+      "Die Breite des KI sagt nichts über Signifikanz aus – entscheidend ist ob es die Null enthält. Hier enthält es sie nicht → signifikant.",
+      "Richtig. KI enthält 0 nicht → p < .05 → signifikant. Das KI beschreibt den plausiblen Bereich für die wahre Mittelwertsdifferenz in der Population.",
+      "Das KI bezieht sich auf die Mittelwertsdifferenz zwischen den Gruppen, nicht auf individuelle Befragtenwerte.",
+      "Beide Grenzen positiv zeigt nur die Richtung des Effekts. Die Größe liest man aus Cohen's d (hier 0.24 = kleiner Effekt)."
+    ]
+  },{
+    id:"e16",transfer:false,
+    title:"Korrelation – r² und Varianzaufklärung",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Pearson-Korrelation</div>
+      <div class="jmv"><div class="jmv-h">Korrelationsmatrix</div>
+        <table>
+          <tr><th></th><th>Pearson-r</th><th>p</th><th>N</th></tr>
+          <tr><td>age_num × pint</td><td>+.18</td><td>&lt; .001</td><td>3 961</td></tr>
+        </table>
+        <div class="ann">age_num: Alter (metrisch) · pint: Politisches Interesse (invertiert: höher = mehr Interesse) · Richtwerte r: .10 klein · .30 mittel · .50 groß</div>
+      </div></div>`,
+    question:"Wie viel Prozent der Varianz im politischen Interesse werden durch das Alter erklärt, und wie ist der Befund einzuordnen?",
+    options:[
+      "18 % – ein mittelgroßer, substanzieller Zusammenhang",
+      "3,2 % (r² = .18² = .032) – statistisch signifikant, aber der Zusammenhang erklärt nur einen kleinen Teil der Varianz",
+      "18 % – aber nur weil p &lt; .001 ist der Zusammenhang so stark",
+      "0,18 % – der Zusammenhang ist praktisch bedeutungslos und nicht signifikant"
+    ],
+    correct:1,
+    feedback:[
+      "18 % wäre r selbst, nicht r². Varianzaufklärung = r² = .18² = .032 = 3,2 %. Und nach Richtwerten ist r = .18 eher klein.",
+      "Richtig. r² = .032 = 3,2 % Varianzaufklärung. Signifikant (p < .001) bei großem N, aber praktisch schwacher Zusammenhang.",
+      "p beschreibt Signifikanz, nicht Stärke. Der Zusammenhang ist klein (r = .18), nicht stark.",
+      "r² = .032 = 3,2 %, nicht 0,18 %. Und p < .001 zeigt eindeutig Signifikanz."
+    ]
+  },{
+    id:"e17",transfer:false,
+    title:"Fehlerarten – β-Fehler und Teststärke",
+    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Forschungsszenario</div>
+      <div class="ctx">Eine Studie mit <strong>n = 40</strong> untersucht ob sich Männer und Frauen in ihrer Demokratiezufriedenheit unterscheiden. Das Ergebnis: <strong>t(38) = 1.84, p = .073</strong>. H₀ wird beibehalten.<br><br>
+        Eine spätere Großstudie (n = 4 000) findet für denselben Vergleich: <strong>p = .019, d = 0.08</strong>.
+      </div></div>`,
+    question:"Was lässt sich aus dem Vergleich beider Studien schließen?",
+    options:[
+      "Die kleine Studie hat einen α-Fehler gemacht – sie hätte H₀ verwerfen müssen",
+      "Die kleine Studie hat möglicherweise einen β-Fehler gemacht – der echte (kleine) Effekt war bei n = 40 nicht nachweisbar",
+      "Die Großstudie ist falsch, weil d = 0.08 zu klein für Signifikanz ist",
+      "Beide Studien widersprechen sich – eines der Ergebnisse muss ein Fehler sein"
+    ],
+    correct:1,
+    feedback:[
+      "α-Fehler wäre das fälschliche Verwerfen von H₀. Hier wurde H₀ beibehalten – das könnte ein β-Fehler sein.",
+      "Richtig. β-Fehler = H₀ beibehalten obwohl ein Effekt existiert. Bei n = 40 fehlte die Teststärke, um d = 0.08 zu entdecken. Die Großstudie zeigt: der Effekt ist real, aber winzig.",
+      "Signifikanz und Effektgröße sind unabhängig. Bei n = 4 000 werden auch d = 0.08 signifikant – das ist kein Fehler, sondern zeigt das N-Problem.",
+      "Kein Widerspruch. Beide Ergebnisse sind konsistent: kleiner Effekt, der bei kleinem n nicht nachweisbar war."
+    ]
+  },{
+    id:"e18",transfer:true,
+    title:"🧠 Transfer: Studiendesign kritisch bewerten",
+    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Studienbeschreibung</div>
+      <div class="ctx">Eine Sozialarbeiterin möchte wissen ob ein neues Beratungsprogramm die Lebenszufriedenheit ihrer Klient:innen verbessert. Sie befragt <strong>15 Personen vor und nach</strong> dem Programm (Skala 0–10) und führt einen t-Test durch.<br><br>
+        Ergebnis: <strong>t(14) = 2.31, p = .037, d = 0.58</strong><br><br>
+        Sie schlussfolgert: <em>&#8222;Das Programm wirkt – die Lebenszufriedenheit ist signifikant gestiegen.&#8221;</em>
+      </div></div>`,
+    question:"Was ist an dieser Schlussfolgerung <b>methodisch zu bedenken</b>?",
+    options:[
+      "Der t-Test ist falsch gewählt – bei Vorher-Nachher-Messungen braucht man einen Chi²-Test",
+      "p = .037 und d = 0.58 sind überzeugend – die Schlussfolgerung ist vollständig korrekt",
+      "Ohne Kontrollgruppe kann nicht ausgeschlossen werden, dass die Verbesserung auch ohne Programm eingetreten wäre; n = 15 ist zudem sehr klein",
+      "d = 0.58 ist zu groß – bei n = 15 können keine mittleren Effekte auftreten"
+    ],
+    correct:2,
+    feedback:[
+      "Falsch. Bei Vorher-Nachher-Messungen derselben Personen ist der gepaarte t-Test korrekt – genau der richtige Test hier.",
+      "Die Statistik ist korrekt angewandt, aber die kausale Schlussfolgerung ist zu stark. Ohne Kontrollgruppe könnte die Verbesserung auch durch Zeiteffekte, Regression zur Mitte oder andere Faktoren entstanden sein.",
+      "Richtig. Das Design hat zwei Schwächen: (1) Keine Kontrollgruppe → Kausalaussage nicht sicher. (2) n = 15 → wenig Teststärke, Ergebnis könnte zufällig sein. Ein signifikantes Ergebnis allein reicht nicht.",
+      "Effektgröße hängt nicht von n ab. d = 0.58 ist ein mittelgroßer Effekt – das ist unabhängig von der Stichprobengröße möglich."
+    ]
+  }
 ];
 
 // ============================================================
+function shuffleItems(){
+  for(let i = items.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+}
 const TOTAL = items.length;
 let state = { phase:'intro', mtnr:'', idx:0, answers:{} };
 
@@ -475,9 +698,16 @@ function setProgress(){
 const mtnrInput = document.getElementById('mtnr-input');
 const startBtn  = document.getElementById('startBtn');
 
+document.getElementById('name-input').addEventListener('input', () => {
+  const v = mtnrInput.value.trim();
+  const nameOk = document.getElementById('name-input').value.trim().length >= 2;
+  startBtn.disabled = !/^\d{7}$/.test(v) || !nameOk;
+});
+
 mtnrInput.addEventListener('input', () => {
   const v = mtnrInput.value.trim();
-  startBtn.disabled = !/^\d{7}$/.test(v);
+  const nameOk = document.getElementById('name-input').value.trim().length >= 2;
+  startBtn.disabled = !/^\d{7}$/.test(v) || !nameOk;
   document.getElementById('mtnr-error').textContent = '';
 });
 mtnrInput.addEventListener('keydown', e => {
@@ -485,6 +715,8 @@ mtnrInput.addEventListener('keydown', e => {
 });
 startBtn.addEventListener('click', () => {
   state.mtnr = mtnrInput.value.trim();
+  state.name = document.getElementById('name-input').value.trim();
+  shuffleItems();
   state.phase = 'quiz';
   hide('phase-intro');
   show('phase-quiz');
@@ -497,7 +729,7 @@ startBtn.addEventListener('click', () => {
 function renderQuestion(){
   const it = items[state.idx];
   document.getElementById('header-sub').textContent =
-    `Matrikelnummer: ${state.mtnr}`;
+    `${state.name} · Matrikelnummer: ${state.mtnr}`;
   document.getElementById('q-title').innerHTML =
     `${state.idx + 1}. ${it.title}${it.transfer ? ' <span class="badge">🧠 TRANSFER</span>' : ''}`;
   document.getElementById('q-scenario').innerHTML = it.scenario || '';
@@ -552,15 +784,16 @@ async function submitResults(){
 
   const score = items.reduce((s, it) => s + (state.answers[it.id] === it.correct ? 1 : 0), 0);
   const pct   = Math.round(score / TOTAL * 100);
-  const grade = pct >= 85 ? 'Sehr gut' : pct >= 70 ? 'Gut' : pct >= 55 ? 'Befriedigend' : pct >= 40 ? 'Ausreichend' : 'Nicht bestanden';
+  const grade = score>=18?'1,0':score>=17?'1,3':score>=16?'1,7':score>=15?'2,0':score>=14?'2,3':score>=13?'2,7':score>=12?'3,0':score>=11?'3,3':score>=10?'3,7':score>=9?'4,0':'5,0';
   const email = `${state.mtnr}@stud.th-mannheim.de`;
 
   // Build FormSubmit payload
   const fd = new FormData();
-  fd.append('_subject',      `CA2 Ernstfall | ${state.mtnr} | ${score}/${TOTAL} (${pct}%)`);
+  fd.append('_subject',      `CA2 Ernstfall | ${state.name} (${state.mtnr}) | ${score}/${TOTAL} (${pct}%)`);
   fd.append('_replyto',      email);
   fd.append('_autoresponse', `Ihr CA2-Ergebnis (${KURS}):\n\nMatrikelnummer: ${state.mtnr}\nPunkte: ${score}/${TOTAL} (${pct} %) – ${grade}\n\nDie detaillierte Auswertung finden Sie in der Anwendung.`);
   fd.append('Kurs',          KURS);
+  fd.append('Name',           state.name);
   fd.append('Matrikelnummer', state.mtnr);
   fd.append('E-Mail',        email);
   fd.append('Score',         `${score}/${TOTAL} (${pct}%) – ${grade}`);
@@ -624,7 +857,7 @@ function showResults(score, pct, grade, email, mailSent){
     wrap.appendChild(div);
   });
 
-  document.getElementById('header-sub').textContent = `Matrikelnummer: ${state.mtnr} · Abgabe abgeschlossen`;
+  document.getElementById('header-sub').textContent = `${state.name} · ${state.mtnr} · Abgabe abgeschlossen`;
   document.getElementById('prog-label').textContent = `${score} / ${TOTAL} Punkte`;
   document.getElementById('bar').style.width = pct + '%';
 }
