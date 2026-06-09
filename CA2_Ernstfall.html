@@ -157,7 +157,7 @@
 // ============================================================
 // KONFIGURATION – bitte anpassen
 // ============================================================
-const DOZENT_EMAIL = "IHR_NAME@hs-mannheim.de"; // <- hier Ihre E-Mail eintragen
+const DOZENT_EMAIL = "a.noyon@th-mannheim.de"; // <- hier Ihre E-Mail eintragen
 const KURS = "QUANT WiSe 2026/27";
 const TIMER_SECONDS = 25 * 60; // 25 Minuten
 
@@ -552,7 +552,7 @@ async function submitResults(){
   const score = items.reduce((s, it) => s + (state.answers[it.id] === it.correct ? 1 : 0), 0);
   const pct   = Math.round(score / TOTAL * 100);
   const grade = pct >= 85 ? 'Sehr gut' : pct >= 70 ? 'Gut' : pct >= 55 ? 'Befriedigend' : pct >= 40 ? 'Ausreichend' : 'Nicht bestanden';
-  const email = `${state.mtnr}@stud.hs-mannheim.de`;
+  const email = `${state.mtnr}@stud.th-mannheim.de`;
 
   // Build FormSubmit payload
   const fd = new FormData();
