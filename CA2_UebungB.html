@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QUANT – CA 2 Übung B</title>
+<style>
+  :root{
+    --bg:#0b1220;--card:#121826;--muted:#9aa4b2;--text:#eef2f7;
+    --accent:#a78bfa;--ok:#34d399;--bad:#f87171;--btn:#8b5cf6;
+  }
+  html,body{height:100%;margin:0}
+  body{background:linear-gradient(135deg,#0d0b1e 0%,#0f0a1a 100%);color:var(--text);
+       font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       display:flex;align-items:flex-start;justify-content:center;padding:24px;min-height:100vh;box-sizing:border-box}
+  .shell{width:100%;max-width:960px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:16px;flex-wrap:wrap}
+  h1{font-size:19px;margin:0;line-height:1.3}
+  .kurs-tag{font-size:12px;font-weight:700;letter-spacing:.06em;color:#a78bfa;text-transform:uppercase;margin-bottom:4px}
+  .progress{height:8px;background:#1f1535;border-radius:999px;overflow:hidden;margin-top:8px}
+  .progress span{display:block;height:8px;background:linear-gradient(90deg,#8b5cf6,#c084fc);width:0%;transition:width .4s ease}
+  .card{background:linear-gradient(180deg,rgba(167,139,250,.06),rgba(167,139,250,.02));
+        border:1px solid #2d1f4a;border-radius:18px;padding:22px 24px;box-shadow:0 12px 48px rgba(2,0,18,.6)}
+  .item-title{font-weight:800;font-size:17px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .item-question{color:#cbd5e0;margin-bottom:14px;font-size:14px;line-height:1.6}
+  .opt{display:flex;gap:10px;align-items:flex-start;margin:9px 0;padding:12px 14px;
+       border:1px solid #2d1f4a;border-radius:12px;cursor:pointer;transition:border-color .15s,background .15s;font-size:13.5px;line-height:1.5}
+  .opt input{margin:0;margin-top:3px;flex-shrink:0}
+  .opt.correct{border-color:#065f46;background:rgba(16,185,129,.1)}
+  .opt.incorrect{border-color:#7f1d1d;background:rgba(239,68,68,.09)}
+  .btns{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  button{background:var(--btn);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:13px}
+  button.sec{background:#1f1535;color:var(--text)}
+  button[disabled]{opacity:.35;cursor:not-allowed}
+  .fb{margin-top:12px;font-size:13px;line-height:1.55;padding:10px 14px;border-radius:8px}
+  .fb.ok{color:#6ee7b7;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}
+  .fb.bad{color:#fca5a5;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)}
+  .muted{color:var(--muted)}
+  .badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;
+         padding:2px 8px;border-radius:999px;border:1px solid #3d2a6a;color:var(--accent);background:rgba(167,139,250,.1)}
+  .scenario{background:rgba(167,139,250,.04);border:1px solid #2d1f4a;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .scenario-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;font-weight:700;margin-bottom:9px}
+  .ctx{color:#b0bec5;font-size:13px;line-height:1.6}
+  .jmv{background:#fff;color:#1a1a1a;border-radius:5px;padding:10px 14px;
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:12.5px;overflow-x:auto}
+  .jmv-h{font-weight:700;font-size:13px;margin-bottom:7px}
+  .jmv table{border-collapse:collapse;width:100%}
+  .jmv th{border-top:2px solid #222;border-bottom:1px solid #444;padding:4px 10px;text-align:right;
+           font-weight:600;font-size:12px;white-space:nowrap}
+  .jmv th:first-child,.jmv td:first-child{text-align:left}
+  .jmv td{text-align:right;padding:3px 10px;border-bottom:1px solid #e0e0e0;font-variant-numeric:tabular-nums}
+  .jmv tr:last-child td{border-bottom:2px solid #222}
+  .jmv .ann{font-size:10.5px;color:#666;margin-top:5px;font-style:italic}
+  .jmv .grp-h td{font-weight:700;color:#1d4ed8;font-size:11.5px;padding-top:8px;border-top:1px solid #ccc}
+  .jmv .span2{font-weight:600;text-align:center;background:#f5f5f5;border-bottom:1px solid #aaa}
+  .jmv th.grp{font-weight:600;font-size:11px;background:#f0f0f0}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <div class="kurs-tag">QUANT · Quantitative Methoden der Sozialforschung</div>
+      <h1>CA 2 – Übung B: Inferenzstatistik angewandt</h1>
+      <div class="muted" style="font-size:13px;margin-top:4px">
+        Punkte: <b id="points">0</b> / <b id="maxpoints">0</b> &nbsp;·&nbsp; Aufgabe <b id="idx">1</b> / <b id="total">0</b>
+      </div>
+    </div>
+    <div style="min-width:240px;flex-shrink:0">
+      <div class="progress"><span id="bar"></span></div>
+      <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="sec" id="resetBtn">↺ Neu starten</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="item-title" id="title"></div>
+    <div id="scenario-wrap"></div>
+    <div class="item-question" id="question"></div>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <div class="btns">
+      <button class="sec" id="prevBtn">← Zurück</button>
+      <button id="nextBtn" disabled>Weiter →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COURSE_TAG = "QUANT";
+const SESSION_TAG = "CA2-UebungB";
+const LS_KEY = `quiz_${COURSE_TAG}_${SESSION_TAG}`;
+
+const items = [
+  {
+    id:"b01",type:"mc",transfer:false,
+    title:"t-Test – Signifikanzentscheidung",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · t-Test für unabhängige Stichproben</div>
+      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
+        <table>
+          <tr><th></th><th>Statistik</th><th>df</th><th>p</th><th>Mittlere Differenz</th><th>Std.-fehler d. Diff.</th><th>95 % KI Untere</th><th>95 % KI Obere</th><th>Cohen's d</th></tr>
+          <tr><td>dem_id &nbsp; Student's t</td><td>0.168</td><td>3 976</td><td>.866</td><td>0.00259</td><td>0.0154</td><td>−0.028</td><td>0.033</td><td>0.005</td></tr>
+        </table>
+        <div class="ann">Anmerkung. Hₐ μMännlich ≠ μWeiblich</div>
+        <table style="margin-top:10px"><tr><th>Gruppe</th><th>N</th><th>Mittelwert</th><th>Median</th><th>Std.-abw.</th><th>Std.-fehler</th></tr>
+          <tr><td>Männlich</td><td>2 119</td><td>1.24</td><td>1.00</td><td>0.491</td><td>0.0107</td></tr>
+          <tr><td>Weiblich</td><td>1 859</td><td>1.24</td><td>1.00</td><td>0.475</td><td>0.0110</td></tr>
+        </table>
+      </div></div>`,
+    question:"Was ist die korrekte <b>Entscheidung</b> auf Basis dieses t-Test-Outputs?",
+    options:[
+      "H₀ wird verworfen – die t-Statistik (0.168) ist positiv, also gibt es einen Effekt",
+      "H₀ wird verworfen – bei df = 3 976 ist der Test sehr präzise",
+      "H₀ wird beibehalten – p = .866 liegt deutlich über .05, kein signifikanter Unterschied",
+      "Das Ergebnis ist unklar – dafür müsste man den β-Fehler kennen"
+    ],
+    correct:2,
+    feedback:[
+      "Das Vorzeichen des t-Werts zeigt nur die Richtung, nicht die Signifikanz. Entscheidend ist der p-Wert.",
+      "Große df bedeuten eine große Stichprobe – das beeinflusst die Präzision, nicht automatisch die Signifikanz. p = .866 ist weit von .05 entfernt.",
+      "Richtig. p = .866 >> .05: kein signifikanter Unterschied zwischen Männern und Frauen bei der Identifikation mit demokratischen Werten.",
+      "β-Fehler ist relevant für die Teststärke, nicht für die Signifikanzentscheidung. Die Entscheidung basiert auf dem p-Wert."
+    ]
+  },
+  {
+    id:"b02",type:"mc",transfer:false,
+    title:"Konfidenzintervall – Enthält es die Null?",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Aus dem t-Test-Output (Aufgabe 1)</div>
+      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
+        <table>
+          <tr><th></th><th>p</th><th>Mittlere Differenz</th><th>95 % KI Untere</th><th>95 % KI Obere</th><th>Cohen's d</th></tr>
+          <tr><td>dem_id</td><td>.866</td><td>0.003</td><td>−0.028</td><td>0.033</td><td>0.005</td></tr>
+        </table>
+      </div></div>`,
+    question:"Was sagt das <b>95 %-Konfidenzintervall [−0.028; 0.033]</b> über die Mittelwertsdifferenz aus?",
+    options:[
+      "Der Unterschied ist signifikant – beide KI-Grenzen liegen sehr nahe bei null",
+      "Der Unterschied ist nicht signifikant – das KI schließt den Wert 0 ein",
+      "Mit 95 % Wahrscheinlichkeit liegt die wahre Differenz zwischen −0.028 und 0.033",
+      "Das KI zeigt, dass der Effekt positiv sein könnte, also ist er relevant"
+    ],
+    correct:1,
+    feedback:[
+      "Nähe zu null ist kein Signifikanzkriterium. Entscheidend ist, ob das KI die null <em>enthält</em>.",
+      "Richtig. Enthält das 95 %-KI den Wert 0, ist der Unterschied nicht signifikant (p ≥ .05) – der wahre Effekt könnte null sein.",
+      "Das ist eine sehr häufige Fehlinterpretation. Korrekt: Bei 95 % aller möglichen Stichproben würde das Intervall den wahren Wert enthalten – nicht: 'Es gibt 95 % Wahrscheinlichkeit für dieses eine Intervall'.",
+      "Dass das KI positive Werte enthält, sagt nichts über Relevanz aus – es enthält auch negative Werte. Und 'könnte positiv sein' genügt nicht für Signifikanz."
+    ]
+  },
+  {
+    id:"b03",type:"mc",transfer:false,
+    title:"Effektstärke vs. Signifikanz",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · t-Test</div>
+      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
+        <table>
+          <tr><th></th><th>Statistik</th><th>df</th><th>p</th><th>Mittlere Differenz</th><th>95 % KI Untere</th><th>95 % KI Obere</th><th>Cohen's d</th></tr>
+          <tr><td>dem_func &nbsp; Student's t</td><td>−6.70</td><td>3 954</td><td>&lt; .001</td><td>−0.170</td><td>−0.220</td><td>−0.120</td><td>−0.23</td></tr>
+        </table>
+        <div class="ann">Anmerkung. Hₐ μStadt ≠ μLand &nbsp;|&nbsp; Richtwerte Cohen's d: klein ≈ 0.20 · mittel ≈ 0.50 · groß ≈ 0.80</div>
+      </div></div>`,
+    question:"Wie ist dieser Befund <b>korrekt einzuordnen</b>?",
+    options:[
+      "p < .001 belegt einen großen, praktisch hochrelevanten Effekt",
+      "Cohen's d = −0.23 zeigt: Das Ergebnis ist nicht signifikant",
+      "Das Ergebnis ist statistisch signifikant, aber praktisch klein (d = −0.23 ≈ kleiner Effekt)",
+      "p-Wert und Cohen's d widersprechen sich – das Ergebnis ist nicht interpretierbar"
+    ],
+    correct:2,
+    feedback:[
+      "p < .001 sagt nur: Der Unterschied ist real (nicht zufällig) – nicht wie groß er ist. Große N machen selbst winzige Effekte signifikant.",
+      "Signifikanz und Effektstärke sind unabhängig voneinander. p < .001 bedeutet eindeutig signifikant; d beschreibt die Größe.",
+      "Richtig. p < .001 → statistisch gesichert. d = −0.23 → kleiner Effekt. Kombination: Der Unterschied ist real, aber praktisch gering.",
+      "Kein Widerspruch: p sagt 'existiert da etwas', Cohen's d sagt 'wie groß ist es'. Beide Informationen ergänzen sich."
+    ]
+  },
+  {
+    id:"b04",type:"mc",transfer:false,
+    title:"ANOVA – F-Test und Effektgröße ω²",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · ANOVA</div>
+      <div class="jmv"><div class="jmv-h">ANOVA – dem_func</div>
+        <table>
+          <tr><th></th><th>Quadratsumme</th><th>df</th><th>Mittlere quad. Abw.</th><th>F</th><th>p</th><th>ω²</th></tr>
+          <tr><td>bbsr</td><td>29.5</td><td>3</td><td>9.825</td><td>17.5</td><td>&lt; .001</td><td>0.012</td></tr>
+          <tr><td>Residuen</td><td>2 217.5</td><td>3 952</td><td>0.561</td><td></td><td></td><td></td></tr>
+        </table>
+        <div class="ann">Richtwerte ω²: klein = 0.01 · mittel = 0.06 · groß = 0.14</div>
+      </div></div>`,
+    question:"Welche Aussage zum Ergebnis dieser ANOVA ist <b>korrekt</b>?",
+    options:[
+      "Alle vier Gruppen unterscheiden sich signifikant voneinander",
+      "ω² = 0.012 bedeutet: Die Gruppierungsvariable erklärt 1,2 % der Gesamtvarianz – ein kleiner Effekt",
+      "F = 17.5 ist der Mittelwert der abhängigen Variable in Gruppe 1",
+      "Bei p < .001 muss ω² mindestens 0.50 betragen"
+    ],
+    correct:1,
+    feedback:[
+      "Die ANOVA sagt nur: Mindestens zwei Gruppen unterscheiden sich. Welche genau, müssen Post-hoc-Tests klären.",
+      "Richtig. ω² = 0.012 = 1,2 % erklärte Varianz. Nach den Richtwerten (klein ab 0.01) ist das ein kleiner Effekt – trotz hochsignifikantem p-Wert.",
+      "F ist die Teststatistik: Varianz zwischen Gruppen geteilt durch Varianz innerhalb der Gruppen. Kein Mittelwert.",
+      "p und ω² sind unabhängig. Große Stichproben machen kleine ω²-Werte signifikant. Es gibt keine mathematische Verbindung zwischen p < .001 und einer Mindest-Effektgröße."
+    ]
+  },
+  {
+    id:"b05",type:"mc",transfer:false,
+    title:"ANOVA – Was folgt nach einem signifikanten Ergebnis?",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 ANOVA-Ergebnis</div>
+      <div class="ctx">Eine ANOVA zum Vergleich der Demokratiezufriedenheit zwischen fünf Altersgruppen ergibt:<br><br>
+        <strong>F(4, 3 947) = 11.8, p &lt; .001, ω² = 0.011</strong>
+      </div></div>`,
+    question:"Was wissen wir auf Basis dieses Ergebnisses <b>sicher</b>?",
+    options:[
+      "Alle fünf Altersgruppen unterscheiden sich signifikant voneinander",
+      "Mindestens eine Gruppe unterscheidet sich signifikant von mindestens einer anderen",
+      "Die ANOVA zeigt direkt, welche Gruppen sich unterscheiden – Post-hoc-Tests sind nicht nötig",
+      "Jüngere Befragte sind signifikant unzufriedener als ältere"
+    ],
+    correct:1,
+    feedback:[
+      "Das wäre zu viel gesagt. Die ANOVA zeigt nur: Es gibt irgendwo einen Unterschied, nicht wo genau oder wie viele Gruppen betroffen sind.",
+      "Richtig. Der signifikante F-Test zeigt, dass nicht alle Gruppen gleich sind. Um zu wissen, welche Paare sich unterscheiden, braucht man Post-hoc-Tests (z. B. Tukey-HSD).",
+      "Die ANOVA kann nicht zeigen, welche Gruppen sich unterscheiden – dazu braucht man Post-hoc-Tests, die für multiple Vergleiche korrigieren.",
+      "Die ANOVA sagt nichts über die Richtung des Unterschieds und auch nichts über spezifische Gruppen."
+    ]
+  },
+  {
+    id:"b06",type:"mc",transfer:false,
+    title:"Chi²-Test – Signifikanz und Cramér's V",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Chi²-Test</div>
+      <div class="jmv"><div class="jmv-h">Kreuztabellen</div>
+        <table>
+          <tr><th>pp01</th><th>Männlich</th><th>Weiblich</th><th>Insgesamt</th></tr>
+          <tr><td>Ja, unternommen</td><td>201</td><td>87</td><td>288</td></tr>
+          <tr><td>Nein, nicht unternommen</td><td>1 927</td><td>1 784</td><td>3 711</td></tr>
+          <tr><td>Insgesamt</td><td>2 128</td><td>1 871</td><td>3 999</td></tr>
+        </table>
+        <table style="margin-top:8px">
+          <tr><th></th><th>Wert</th><th>df</th><th>p</th></tr>
+          <tr><td>χ²</td><td>34.3</td><td>1</td><td>&lt; .001</td></tr>
+          <tr><td>N</td><td>3 999</td><td></td><td></td></tr>
+        </table>
+        <table style="margin-top:8px">
+          <tr><th>Nominal</th><th>Wert</th></tr>
+          <tr><td>Cramér's V</td><td>0.093</td></tr>
+        </table>
+        <div class="ann">Richtwerte Cramér's V: .10 = klein · .30 = mittel · .50 = groß</div>
+      </div></div>`,
+    question:"Wie ist dieses Chi²-Ergebnis korrekt einzuordnen?",
+    options:[
+      "χ² = 34.3 erklärt 34,3 % der Varianz in der politischen Partizipation",
+      "Das Ergebnis ist nicht signifikant, da Cramér's V < .10",
+      "Der Zusammenhang ist statistisch signifikant, aber gemessen an Cramér's V (.093) klein",
+      "Da p < .001, besteht ein starker Zusammenhang zwischen Geschlecht und Partizipation"
+    ],
+    correct:2,
+    feedback:[
+      "χ² ist eine Teststatistik, kein Varianzaufklärungsmaß. 34,3 % Varianz wäre ein enorm starker Effekt – das ist nicht gemeint.",
+      "Cramér's V beschreibt die Effektstärke, nicht die Signifikanz. Signifikanz wird durch p bestimmt (hier p < .001 → signifikant).",
+      "Richtig. Signifikanz (p < .001) und Effektstärke (Cramér's V = .093 ≈ klein) müssen getrennt betrachtet werden. Der Zusammenhang ist real, aber schwach.",
+      "p < .001 sagt nur: Der Zusammenhang ist statistisch gesichert. Die Stärke des Zusammenhangs liest man aus Cramér's V – das ist hier klein."
+    ]
+  },
+  {
+    id:"b07",type:"mc",transfer:false,
+    title:"Pearson vs. Spearman – welches Maß wählen?",
+    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Forschungsfrage</div>
+      <div class="ctx">Fragestellung: „Gibt es einen Zusammenhang zwischen <strong>Bildungsabschluss</strong> (ordinal, 9 Kategorien, Variable <em>casmin</em>) und <strong>politischem Interesse</strong> (fünfstufige Skala, Variable <em>pint</em>)?"</div></div>`,
+    question:"Welches Korrelationsmaß ist für diese Fragestellung <b>angemessener</b>, und warum?",
+    options:[
+      "Pearson, da beide Variablen viele Kategorien haben und numerisch codiert sind",
+      "Spearman, da mindestens eine Variable ordinalskaliert ist",
+      "Pearson, da Spearman nur für dichotome (2-kategoriale) Variablen geeignet ist",
+      "Weder Pearson noch Spearman – Korrelationen erfordern metrisches Niveau bei beiden Variablen"
+    ],
+    correct:1,
+    feedback:[
+      "Numerische Codierung allein macht eine Variable nicht metrisch. Bildungsabschluss bleibt ordinal, egal wie die Kategorien nummeriert sind.",
+      "Richtig. Spearman setzt nur Rangordnung voraus (ordinal oder metrisch) und misst monotone Zusammenhänge – ideal, wenn mindestens eine Variable ordinal ist.",
+      "Spearman ist nicht auf dichotome Variablen beschränkt – es funktioniert bei jedem ordinalem Skalenniveau.",
+      "Spearman kann mit Ordinaldaten umgehen. Pearson als das anspruchsvollere Maß setzt metrisches Niveau voraus – bei Ordinaldaten ist Spearman die geeignete Alternative."
+    ]
+  },
+  {
+    id:"b08",type:"mc",transfer:false,
+    title:"Korrelation – Kausalität und r²",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Pearson-Korrelation</div>
+      <div class="jmv"><div class="jmv-h">Korrelationsmatrix</div>
+        <table>
+          <tr><th></th><th>Pearson-r</th><th>p</th><th>N</th></tr>
+          <tr><td>age_num × hh_inc</td><td>−.24</td><td>&lt; .001</td><td>3 663</td></tr>
+        </table>
+        <div class="ann">age_num: Alter (metrisch) · hh_inc: Haushaltseinkommen (10 Kategorien)</div>
+      </div></div>`,
+    question:"Welche Aussage zu diesem Ergebnis ist <b>korrekt</b>?",
+    options:[
+      "Höheres Alter verursacht niedrigeres Einkommen – das zeigt die negative Korrelation",
+      "Es besteht ein schwacher negativer Zusammenhang; Kausalaussagen sind auf Basis von Korrelationen nicht möglich",
+      "r = −.24 bedeutet, dass das Alter 24 % der Varianz im Einkommen erklärt",
+      "Da p < .001, ist der Zusammenhang stark und praktisch bedeutsam"
+    ],
+    correct:1,
+    feedback:[
+      "Korrelation ≠ Kausalität. Konfundierte Variablen (z. B. Renteneintritt, Karriereunterbrechungen) könnten den Zusammenhang erklären.",
+      "Richtig. r = −.24 zeigt einen schwachen negativen Zusammenhang. Kausalität ist aus Querschnittsdaten ohne experimentelle Kontrolle nicht ableitbar.",
+      "24 % Varianzaufklärung wäre r². Hier: r² = (−.24)² = .058 = 5,8 %. r und r² sind nicht dasselbe.",
+      "p < .001 sagt nur: Der Zusammenhang ist nicht zufällig. Die Stärke liest man aus r (hier schwach; Faustregel: .10 = klein, .30 = mittel, .50 = groß)."
+    ]
+  },
+  {
+    id:"b09",type:"mc",transfer:false,
+    title:"Signifikanz bei großem N",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · t-Test</div>
+      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
+        <table>
+          <tr><th></th><th>Statistik</th><th>df</th><th>p</th><th>Mittlere Differenz</th><th>Cohen's d</th></tr>
+          <tr><td>dem_func</td><td>2.05</td><td>3 998</td><td>.041</td><td>0.024</td><td>0.065</td></tr>
+        </table>
+        <div class="ann">Richtwerte Cohen's d: klein ≈ 0.20 · mittel ≈ 0.50 · groß ≈ 0.80</div>
+      </div></div>`,
+    question:"Was ist bei diesem Ergebnis besonders zu beachten?",
+    options:[
+      "Das Ergebnis ist statistisch und praktisch bedeutsam – p < .05 und t > 2.0 bestätigen das",
+      "Bei n ≈ 4 000 kann ein statistisch signifikantes Ergebnis praktisch ohne Bedeutung sein – d = 0.065 ist extrem klein",
+      "Da d = 0.065 sehr klein ist, ist das Ergebnis trotz p = .041 nicht signifikant",
+      "t = 2.05 zeigt bei df = 3 998 immer einen mittleren bis großen Effekt"
+    ],
+    correct:1,
+    feedback:[
+      "p < .05 und t > 2 sagen: statistisch signifikant. Das sagt aber nichts über die praktische Bedeutsamkeit – dafür braucht man Cohen's d.",
+      "Richtig. Bei n ≈ 4 000 werden selbst Unterschiede von 0.024 Skalenpunkten signifikant. d = 0.065 liegt weit unter dem Richtwert für 'klein' (0.20) – praktisch bedeutungslos.",
+      "Cohen's d beeinflusst nicht die Signifikanzentscheidung – die basiert auf p. Signifikant und trivial können gleichzeitig zutreffen.",
+      "Der t-Wert allein sagt nichts über Effektstärke aus. Mit df = 3 998 wird sehr kleiner t signifikant. t und d sind verschiedene Konzepte."
+    ]
+  },
+  {
+    id:"b10",type:"mc",transfer:true,
+    title:"🧠 Transfer: Levene-Test und Varianzhomogenität",
+    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Voraussetzungsprüfung im t-Test</div>
+      <div class="jmv"><div class="jmv-h">Levene's Test auf Varianzhomogenität</div>
+        <table>
+          <tr><th></th><th>F</th><th>df</th><th>df2</th><th>p</th></tr>
+          <tr><td>pint</td><td>5.14</td><td>1</td><td>3 974</td><td>.023</td></tr>
+        </table>
+        <div class="ann">pint: Politisches Interesse (Skala 1–5). Gruppen: Bildungsniveau hoch vs. niedrig</div>
+      </div></div>`,
+    question:"Was bedeutet dieses Levene-Ergebnis für die weitere Analyse?",
+    options:[
+      "Der t-Test ist signifikant, da der Levene-Test signifikant ist (p = .023)",
+      "Die Varianzen sind homogen – der Student-t-Test kann bedenkenlos verwendet werden",
+      "Die Varianzhomogenität ist verletzt (p < .05) – der Welch-Test wäre die robustere Alternative",
+      "Der Levene-Test ersetzt den t-Test, wenn er signifikant ist"
+    ],
+    correct:2,
+    feedback:[
+      "Levene und t-Test prüfen verschiedene Dinge. Levene prüft Varianzhomogenität als Voraussetzung – nicht die inhaltliche Hypothese.",
+      "Falsch – p = .023 < .05 bedeutet: Die Varianzen unterscheiden sich signifikant. Die Homogenitätsannahme ist verletzt.",
+      "Richtig. Bei verletzter Varianzhomogenität (Levene p < .05) sollte der Welch-Test berichtet werden – er ist robust gegenüber ungleichen Varianzen zwischen Gruppen.",
+      "Nein. Der Levene-Test ist eine Voraussetzungsprüfung, kein inhaltlicher Test. Man führt anschließend den t-Test bzw. Welch-Test durch."
+    ]
+  }
+];
+
+const TOTAL = items.length;
+let state = (() => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } })();
+if (!state.idx && state.idx !== 0) state = { idx:0, points:0, done:{} };
+
+function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){} }
+
+function setBar(){
+  document.getElementById("bar").style.width = (state.idx / TOTAL * 100) + "%";
+  document.getElementById("points").textContent = state.points;
+  document.getElementById("maxpoints").textContent = TOTAL;
+  document.getElementById("idx").textContent = Math.min(state.idx + 1, TOTAL);
+  document.getElementById("total").textContent = TOTAL;
+}
+
+function render(){
+  const it = items[state.idx];
+  document.getElementById("title").innerHTML =
+    `${state.idx + 1}. ${it.title} ${it.transfer ? '<span class="badge">🧠 TRANSFER</span>' : ""}`;
+  document.getElementById("scenario-wrap").innerHTML = it.scenario || "";
+  document.getElementById("question").innerHTML = it.question;
+  document.getElementById("feedback").innerHTML = "";
+  document.getElementById("feedback").className = "";
+
+  const wrap = document.getElementById("options");
+  wrap.innerHTML = "";
+  const nextBtn = document.getElementById("nextBtn");
+  nextBtn.disabled = true;
+  document.getElementById("prevBtn").disabled = state.idx === 0;
+
+  it.options.forEach((opt, i) => {
+    const row = document.createElement("label");
+    row.className = "opt";
+    const inp = document.createElement("input");
+    inp.type = "radio"; inp.name = it.id; inp.value = i;
+    const span = document.createElement("span");
+    span.innerHTML = opt;
+    row.appendChild(inp); row.appendChild(span);
+    row.addEventListener("click", () => {
+      const correct = i === it.correct;
+      document.querySelectorAll("label.opt").forEach(l => {
+        l.querySelector("input").disabled = true;
+        if (parseInt(l.querySelector("input").value) === i)
+          l.classList.add(correct ? "correct" : "incorrect");
+      });
+      const fb = document.getElementById("feedback");
+      fb.innerHTML = (correct ? "✓ " : "✗ ") + it.feedback[i];
+      fb.className = "fb " + (correct ? "ok" : "bad");
+      if (!(it.id in state.done)) {
+        state.points += correct ? 1 : 0;
+        state.done[it.id] = correct ? "ok" : "no";
+        save();
+        setBar();  // update points display immediately
+      }
+      nextBtn.disabled = false;
+    });
+    wrap.appendChild(row);
+  });
+  setBar();
+}
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (state.idx < TOTAL - 1) { state.idx++; save(); render(); }
+  else { showDone(); }
+});
+
+function showDone(){
+  const pct = Math.round(state.points / TOTAL * 100);
+  const grade = pct >= 85 ? "Sehr gut" : pct >= 70 ? "Gut" : pct >= 55 ? "Befriedigend" : pct >= 40 ? "Ausreichend" : "Nicht bestanden";
+  document.querySelector(".card").innerHTML = `
+    <div style="text-align:center;padding:16px 0 8px">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <div style="font-size:28px;font-weight:800;margin-bottom:6px">${state.points} / ${TOTAL} Punkte</div>
+      <div style="font-size:15px;color:var(--accent);font-weight:700;margin-bottom:4px">${pct} % · ${grade}</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px">Übung abgeschlossen. Die Korrektantworten wurden pro Frage angezeigt.</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
+      <button onclick="resetQuiz()">↺ Neu starten</button>
+    </div>`;
+  document.getElementById("bar").style.width = "100%";
+  document.getElementById("points").textContent = state.points;
+}
+
+function resetQuiz(){
+  if (confirm("Fortschritt löschen und neu starten?")) {
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    state = { idx:0, points:0, done:{} }; save(); location.reload();
+  }
+}
+document.getElementById("prevBtn").addEventListener("click", () => {
+  if (state.idx > 0) { state.idx--; save(); render(); }
+});
+document.getElementById("resetBtn").addEventListener("click", resetQuiz);
+
+render();
+</script>
+</body>
+</html>
