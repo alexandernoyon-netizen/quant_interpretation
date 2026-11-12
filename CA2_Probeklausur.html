@@ -257,7 +257,6 @@ async function finish(timeout) {
     } catch (e) { $('sendstate').textContent = 'Übermittlung hat nicht geklappt – kein Problem, deine Auswertung oben bleibt gültig.'; }
   }
 }
-}
 
 document.addEventListener('keydown', e => {
   if ($('quiz').classList.contains('hidden') || $('modal').classList.contains('on')) return;
