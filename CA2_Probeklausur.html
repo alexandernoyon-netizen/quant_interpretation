@@ -104,6 +104,7 @@ const L = 'ABCD';
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const fmt = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
 const EXAM = CONFIG.mode === 'exam';
+const noR = t => t.replace(/^Richtig\.\s*/, ''); // Feedback der richtigen Option ohne doppeltes „Richtig.“
 const grade = p => { if (!CONFIG.grades) return null; return CONFIG.grades.find(g => p >= g[0])[1]; };
 
 let S;
@@ -148,7 +149,7 @@ function show(i) {
   let fb = '';
   if (checked) {
     const ok = chosen === it.c;
-    fb = `<div class="fb ${ok ? 'ok' : 'no'}"><b>${ok ? 'Richtig.' : 'Leider falsch.'}</b> ${it.opts[chosen][1]}${ok ? '' : `<br><br><b>Richtig wäre ${L[it.perm.indexOf(it.c)]}:</b> ${it.opts[it.c][1].replace(/^Richtig\.\s*/, '')}`}</div>`;
+    fb = `<div class="fb ${ok ? 'ok' : 'no'}"><b>${ok ? 'Richtig.' : 'Leider falsch.'}</b> ${ok ? noR(it.opts[chosen][1]) : it.opts[chosen][1]}${ok ? '' : `<br><br><b>Richtig wäre ${L[it.perm.indexOf(it.c)]}:</b> ${noR(it.opts[it.c][1])}`}</div>`;
   }
   const last = i === n - 1;
   let right;
@@ -219,7 +220,7 @@ async function finish(timeout) {
     const ch = S.ans[it.id], ok = ch === it.c;
     return `<div class="rv"><h3><span class="mark ${ok ? 'ok' : 'no'}">${ok ? '✓ richtig' : (ch == null ? '– keine Antwort' : '✗ falsch')}</span>${it.title}</h3>
       ${ch != null && !ok ? `<div class="line"><b>Deine Antwort:</b> ${it.opts[ch][0]}<br><span style="color:#fca5a5">${it.opts[ch][1]}</span></div>` : ''}
-      <div class="line"><b>Richtige Antwort:</b> ${it.opts[it.c][0]}<br><span style="color:#a7f3d0">${it.opts[it.c][1]}</span></div>
+      <div class="line"><b>Richtige Antwort:</b> ${it.opts[it.c][0]}<br><span style="color:#a7f3d0">${noR(it.opts[it.c][1])}</span></div>
       <details><summary>Aufgabe noch einmal ansehen</summary><div class="scen">${it.scen}</div><div class="q">${it.q}</div></details></div>`;
   }).join('');
 
