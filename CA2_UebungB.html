@@ -240,23 +240,23 @@ async function finish(timeout) {
   window.scrollTo(0, 0);
 
   if (CONFIG.submit) {
+    // Anonyme Rückmeldung an ein Google-Formular (Antworten landen in Google Forms / Google Tabellen)
     $('sendstate').textContent = 'Ergebnis wird anonym übermittelt …';
-    const fd = new FormData();
-    fd.append('_subject', `${CONFIG.submit.label} | anonym | ${pts}/${n} | ${fmt(used)} min${timeout ? ' | Zeit abgelaufen' : ''}`);
-    fd.append('_template', 'table');
-    fd.append('Test', CONFIG.title);
-    fd.append('Punkte', `${pts}/${n}`);
-    fd.append('Benötigte Zeit', fmt(used) + ' min' + (timeout ? ' (abgelaufen)' : ''));
+    const G = CONFIG.submit, body = new URLSearchParams();
+    body.append(G.fields.test, CONFIG.title);
+    body.append(G.fields.punkte, `${pts}/${n}`);
+    body.append(G.fields.zeit, fmt(used) + (timeout ? ' (abgelaufen)' : ''));
     items.forEach(it => {
       const ch = S.ans[it.id];
-      fd.append(it.id, `${ch == null ? 'keine Antwort' : ch === it.c ? 'richtig' : 'falsch (' + 'ABCD'[ch] + ')'} · ${fmt(S.tItem[it.id] || 0)} min`);
+      if (G.fields.items[it.id]) body.append(G.fields.items[it.id], `${ch == null ? 'keine Antwort' : ch === it.c ? 'richtig' : 'falsch (' + 'ABCD'[ch] + ')'} · ${fmt(S.tItem[it.id] || 0)}`);
     });
     try {
-      const r = await fetch('https://formsubmit.co/ajax/' + CONFIG.submit.email, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
-      const j = await r.json();
-      $('sendstate').textContent = (j.success === true || j.success === 'true') ? '✓ Ergebnis wurde anonym übermittelt (ohne Namen, ohne Matrikelnummer).' : 'Übermittlung hat nicht geklappt – kein Problem, deine Auswertung oben bleibt gültig.';
+      // no-cors: Google beantwortet die Anfrage nicht lesbar – kommt kein Netzwerkfehler, ist sie angekommen
+      await fetch(G.action, { method: 'POST', mode: 'no-cors', body });
+      $('sendstate').textContent = '✓ Ergebnis wurde anonym übermittelt (ohne Namen, ohne Matrikelnummer).';
     } catch (e) { $('sendstate').textContent = 'Übermittlung hat nicht geklappt – kein Problem, deine Auswertung oben bleibt gültig.'; }
   }
+}
 }
 
 document.addEventListener('keydown', e => {
