@@ -1,0 +1,3 @@
+# Quellen und Build enthalten die Ernstfall-Lösungen – niemals ins öffentliche Repo
+src/
+build/

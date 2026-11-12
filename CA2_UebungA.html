@@ -1,450 +1,269 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QUANT – CA 2 Übung A</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CA 2 · Übung A: Deskription & Grundlagen der Inferenz</title>
 <style>
-  :root{
-    --bg:#0b1220;--card:#121826;--muted:#9aa4b2;--text:#eef2f7;
-    --accent:#7dd3fc;--ok:#34d399;--bad:#f87171;--btn:#38bdf8;
-  }
-  html,body{height:100%;margin:0}
-  body{background:linear-gradient(135deg,#0b1220 0%,#0f172a 100%);color:var(--text);
-       font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       display:flex;align-items:flex-start;justify-content:center;padding:24px;min-height:100vh;box-sizing:border-box}
-  .shell{width:100%;max-width:960px}
-  header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:16px;flex-wrap:wrap}
-  h1{font-size:19px;margin:0;line-height:1.3}
-  .kurs-tag{font-size:12px;font-weight:700;letter-spacing:.06em;color:#7dd3fc;text-transform:uppercase;margin-bottom:4px}
-  .progress{height:8px;background:#1f2937;border-radius:999px;overflow:hidden;margin-top:8px}
-  .progress span{display:block;height:8px;background:linear-gradient(90deg,#38bdf8,#60a5fa);width:0%;transition:width .4s ease}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
-        border:1px solid #1e2a3a;border-radius:18px;padding:22px 24px;box-shadow:0 12px 48px rgba(2,6,23,.5)}
-  .item-title{font-weight:800;font-size:17px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .item-question{color:#cbd5e0;margin-bottom:14px;font-size:14px;line-height:1.6}
-  .opt{display:flex;gap:10px;align-items:flex-start;margin:9px 0;padding:12px 14px;
-       border:1px solid #1e2a3a;border-radius:12px;cursor:pointer;transition:border-color .15s,background .15s;font-size:13.5px;line-height:1.5}
-  .opt input{margin:0;margin-top:3px;flex-shrink:0}
-  .opt.correct{border-color:#065f46;background:rgba(16,185,129,.1)}
-  .opt.incorrect{border-color:#7f1d1d;background:rgba(239,68,68,.09)}
-  .btns{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
-  button{background:var(--btn);color:#0b1220;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:13px}
-  button.sec{background:#1f2937;color:var(--text)}
-  button[disabled]{opacity:.35;cursor:not-allowed}
-  .fb{margin-top:12px;font-size:13px;line-height:1.55;padding:10px 14px;border-radius:8px}
-  .fb.ok{color:#6ee7b7;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}
-  .fb.bad{color:#fca5a5;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)}
-  .muted{color:var(--muted)}
-  .badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;
-         padding:2px 8px;border-radius:999px;border:1px solid #334155;color:var(--accent);background:rgba(125,211,252,.1)}
-  /* Jamovi output */
-  .scenario{background:rgba(255,255,255,.035);border:1px solid #253044;border-radius:10px;padding:14px 16px;margin-bottom:14px}
-  .scenario-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#7dd3fc;font-weight:700;margin-bottom:9px}
-  .ctx{color:#b0bec5;font-size:13px;line-height:1.6}
-  .jmv{background:#fff;color:#1a1a1a;border-radius:5px;padding:10px 14px;
-       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:12.5px;overflow-x:auto}
-  .jmv-h{font-weight:700;font-size:13px;margin-bottom:7px}
-  .jmv table{border-collapse:collapse;width:100%}
-  .jmv th{border-top:2px solid #222;border-bottom:1px solid #444;padding:4px 10px;text-align:right;
-           font-weight:600;font-size:12px;white-space:nowrap}
-  .jmv th:first-child,.jmv td:first-child{text-align:left}
-  .jmv td{text-align:right;padding:3px 10px;border-bottom:1px solid #e0e0e0;font-variant-numeric:tabular-nums}
-  .jmv tr:last-child td{border-bottom:2px solid #222}
-  .jmv .ann{font-size:10.5px;color:#666;margin-top:5px;font-style:italic}
-  .jmv .sec-head td,.jmv .sec-head th{font-weight:700;color:#1d4ed8;padding-top:8px;border-top:1px solid #ccc;font-size:11.5px}
+:root{--bg:#0b1220;--card:#121826;--line:#1e2a3a;--muted:#9aa4b2;--text:#eef2f7;--accent:#7dd3fc;--ok:#34d399;--bad:#f87171;--btn:#38bdf8;--warn:#fbbf24}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:linear-gradient(135deg,#0b1220 0%,#0f172a 100%);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:20px}
+.shell{max-width:980px;margin:0 auto}
+.kurs{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+h1{font-size:21px;margin:2px 0 4px;line-height:1.3}
+.sub{color:var(--muted);font-size:14px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:16px}
+.rules{margin:10px 0 0;padding-left:20px}.rules li{margin:5px 0}
+button{background:var(--btn);color:#0b1220;border:none;border-radius:10px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer}
+button.sec{background:#1f2937;color:var(--text);border:1px solid #334155}
+button[disabled]{opacity:.35;cursor:not-allowed}
+.bar{position:sticky;top:0;z-index:5;background:rgba(11,18,32,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:0 -20px;padding:10px 20px}
+.barin{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:20px;padding:4px 12px;border-radius:8px;background:#1f2937}
+.timer.warn{background:#7f1d1d;color:#fff;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.55}}
+.prog{flex:1;min-width:140px}.prog .t{font-size:13px;color:var(--muted)}
+.prog .track{height:6px;background:#1f2937;border-radius:99px;overflow:hidden;margin-top:4px}.prog .track span{display:block;height:6px;background:linear-gradient(90deg,#38bdf8,#60a5fa);width:0}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-width:980px;margin-left:auto;margin-right:auto}
+.nav button{width:36px;height:34px;padding:0;font-size:13px;background:#1f2937;color:var(--text);border:1px solid #334155;position:relative}
+.nav button.done{background:#164e63;border-color:#0e7490}
+.nav button.cur{outline:2px solid var(--accent);outline-offset:1px}
+.nav button.flag::after{content:"";position:absolute;top:-1px;right:-1px;border-style:solid;border-width:0 10px 10px 0;border-color:transparent var(--warn) transparent transparent;border-radius:0 6px 0 0}
+.ititle{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-weight:800;font-size:17px}
+.pill{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;background:#1e293b;color:var(--accent)}
+.pill.tr{color:#d8b4fe}
+.scen{margin-top:10px}
+.q{font-weight:700;margin:14px 0 10px}
+.opt{display:flex;gap:12px;align-items:flex-start;margin:9px 0;padding:11px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:#334155;background:rgba(255,255,255,.02)}
+.opt .lt{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1.5px solid #475569;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.opt.sel{border-color:var(--btn);background:rgba(56,189,248,.08)}.opt.sel .lt{background:var(--btn);border-color:var(--btn);color:#0b1220}
+.opt.ok{border-color:#065f46;background:rgba(16,185,129,.12)}.opt.ok .lt{background:var(--ok);border-color:var(--ok);color:#0b1220}
+.opt.no{border-color:#7f1d1d;background:rgba(239,68,68,.1)}.opt.no .lt{background:var(--bad);border-color:var(--bad);color:#0b1220}
+.locked .opt{cursor:default}
+.fb{margin-top:12px;font-size:14px;padding:10px 14px;border-radius:10px}
+.fb.ok{color:#a7f3d0;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25)}
+.fb.no{color:#fecaca;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25)}
+.btns{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap}
+.flagbtn{background:none;border:1px solid #334155;color:var(--muted);font-weight:600;font-size:13px;padding:7px 12px}
+.flagbtn.on{color:var(--warn);border-color:var(--warn)}
+.modal{position:fixed;inset:0;background:rgba(2,6,23,.75);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.modal.on{display:flex}.modal .card{max-width:520px;width:100%;margin:0}
+.big{font-size:34px;font-weight:800;margin:6px 0}
+.grade{display:inline-block;font-size:22px;font-weight:800;background:#1e293b;border-radius:10px;padding:4px 14px;margin-left:8px;color:var(--accent)}
+.stats{display:flex;gap:22px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-top:6px}
+.rv{border-top:1px solid var(--line);padding:16px 0}
+.rv h3{font-size:15px;margin:0 0 6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rv .mark{font-weight:800;padding:1px 9px;border-radius:6px;font-size:12px}
+.rv .mark.ok{background:rgba(16,185,129,.18);color:var(--ok)}.rv .mark.no{background:rgba(239,68,68,.18);color:var(--bad)}
+.rv details{margin-top:6px}.rv summary{cursor:pointer;color:var(--accent);font-size:13px}
+.rv .line{font-size:14px;margin:4px 0}.rv .line b{color:var(--muted);font-weight:600}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.hidden{display:none!important}
+@media(max-width:640px){body{padding:12px}.card{padding:16px}.bar{margin:0 -12px;padding:8px 12px}}
 </style>
 </head>
 <body>
 <div class="shell">
-  <header>
-    <div>
-      <div class="kurs-tag">QUANT · Quantitative Methoden der Sozialforschung</div>
-      <h1>CA 2 – Übung A: Deskription &amp; Grundlagen der Inferenz</h1>
-      <div class="muted" style="font-size:13px;margin-top:4px">
-        Punkte: <b id="points">0</b> / <b id="maxpoints">0</b> &nbsp;·&nbsp; Aufgabe <b id="idx">1</b> / <b id="total">0</b>
-      </div>
-    </div>
-    <div style="min-width:240px;flex-shrink:0">
-      <div class="progress"><span id="bar"></span></div>
-      <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
-        <button class="sec" id="resetBtn">↺ Neu starten</button>
-      </div>
-    </div>
-  </header>
 
+<!-- START -->
+<section id="start">
+  <div class="kurs">Quantitative Methoden der Sozialforschung · 1. Semester</div>
+  <h1>CA 2 · Übung A: Deskription & Grundlagen der Inferenz</h1>
+  <div class="sub">Lage- und Streumaße, Standardfehler, z-Werte, Hypothesenlogik</div>
   <div class="card">
-    <div class="item-title" id="title"></div>
-    <div id="scenario-wrap"></div>
-    <div class="item-question" id="question"></div>
-    <div id="options"></div>
-    <div id="feedback"></div>
-    <div class="btns">
-      <button class="sec" id="prevBtn">← Zurück</button>
-      <button id="nextBtn" disabled>Weiter →</button>
-    </div>
+    <div id="intro"></div>
+    <div class="btns" style="justify-content:flex-start"><button id="go">Starten</button></div>
   </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="hidden">
+  <div class="bar"><div class="barin">
+    <div class="timer hidden" id="timer">--:--</div>
+    <div class="prog"><div class="t" id="progt"></div><div class="track"><span id="progb"></span></div></div>
+    <button class="sec hidden" id="submitTop">Abgeben</button>
+  </div>
+  <div class="nav hidden" id="nav"></div></div>
+  <div class="card" id="itemcard"></div>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="hidden"></section>
 </div>
 
+<div class="modal" id="modal"><div class="card" id="modalc"></div></div>
+
 <script>
-const COURSE_TAG = "QUANT";
-const SESSION_TAG = "CA2-UebungA";
-const LS_KEY = `quiz_${COURSE_TAG}_${SESSION_TAG}`;
+const CONFIG = {"kurs":"Quantitative Methoden der Sozialforschung · 1. Semester","title":"CA 2 · Übung A: Deskription & Grundlagen der Inferenz","subtitle":"Lage- und Streumaße, Standardfehler, z-Werte, Hypothesenlogik","mode":"practice","timeMin":null,"grades":null,"shuffleItems":false,"submit":null,"intro":"<p><b>Übungsmodus mit Sofort-Feedback</b> – Schwerpunkt: Lage- und Streumaße, Standardfehler, z-Werte, Normalverteilung, Hypothesen und Fehlerarten.</p>\n  <ul class=\"rules\">\n    <li><b>10 Aufgaben</b>, ohne Zeitlimit.</li>\n    <li>Antwort wählen, dann <b>„Antwort prüfen“</b>: Du siehst sofort, ob es stimmt, und warum – auch bei den falschen Optionen.</li>\n    <li>Am Ende gibt es eine Übersicht mit allen Lösungen. Antworten werden bei jedem Durchgang neu gemischt.</li>\n    <li>Wer es unter echten Bedingungen probieren will: Die <b>Probeklausur</b> hat 18 Aufgaben und 40 Minuten – genau wie das CA 2.</li>\n  </ul>\n  <p class=\"note\">Nichts wird gespeichert oder übermittelt.</p>"};
+const ITEMS = [{"id":"A01","topic":"Standardfehler","title":"Standardfehler – Was bedeutet er?","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\"></th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">dem_func</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">N</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2 684</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Mittelwert</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.38</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Std.-fehler des Mittelwerts</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.014</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Standardabweichung</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.740</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">dem_func: Zufriedenheit mit dem Funktionieren der Demokratie (1 = sehr zufrieden … 4 = sehr unzufrieden); nur Stadtbevölkerung</div></div>","q":"Was beschreibt der <b>Std.-fehler des Mittelwerts</b> von 0.014 in diesem Output?","opts":[["Wie stark die einzelnen Befragten im Mittel um den Mittelwert ihrer Stichprobe herum streuen.","Das beschreibt die Standardabweichung (hier 0.740) – sie zeigt, wie stark Einzelwerte um den Mittelwert streuen."],["Wie stark der Mittelwert schwanken würde, wenn man viele Stichproben dieser Größe zöge.","Richtig. Der SE ist die Streuung der Stichprobenmittelwerte – ein Maß für die Präzision der Schätzung. SE = SD / √n."],["Wie groß der Messfehler des Fragebogens ist, mit dem die Zufriedenheit erhoben wurde.","Messfehler betrifft die Reliabilität des Instruments, nicht die Präzision des Stichprobenmittelwerts."],["Wie weit Mittelwert und Median in dieser Stichprobe voneinander entfernt liegen.","Die Differenz von Mittelwert und Median wäre ein Hinweis auf Schiefe. Der SE beschreibt etwas anderes: die Präzision des Mittelwerts."]],"c":1},{"id":"A02","topic":"Lagemaße","title":"Mittelwert vs. Median – schiefe Verteilung","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\"></th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">hh_inc</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">N</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3 847</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Mittelwert</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">4.82</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Median</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3.00</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Standardabweichung</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.94</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">hh_inc: Haushaltseinkommen (10 Kategorien; 1 = unter 500 € … 10 = über 5 000 €)</div></div>","q":"Was lässt sich aus dem deutlichen Unterschied zwischen Mittelwert (4.82) und Median (3.00) schließen?","opts":[["Ein so großer Abstand weist auf Eingabefehler hin; die Daten müssen vor der Analyse bereinigt werden.","Nicht zwingend. Große Abstände zwischen Mittelwert und Median sind bei Einkommensdaten typisch und inhaltlich erklärbar."],["Die Verteilung ist linksschief – wenige sehr niedrige Werte ziehen den Mittelwert nach unten.","Falsch herum. Bei Linksschiefe liegt der Mittelwert unter dem Median. Hier liegt er darüber."],["Die Verteilung ist rechtsschief – wenige sehr hohe Einkommen ziehen den Mittelwert nach oben.","Richtig. Wenige hohe Werte ziehen den Mittelwert nach oben, der Median bleibt robust. Bei Einkommen ist er deshalb oft aussagekräftiger."],["Der Median ist bei einer Variable mit zehn Kategorien nicht interpretierbar und sollte weggelassen werden.","Der Median ist bei ordinalen und metrischen Variablen sinnvoll – gerade bei schiefen Verteilungen."]],"c":2},{"id":"A03","topic":"Streuungsmaße","title":"Standardabweichung – Gruppenvergleich","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik für die Gruppen</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Gruppe</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">N</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Mittelwert</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Median</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Std.-abw.</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Std.-fehler</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Stadt</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2 684</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.38</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.00</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.74</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.014</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Land</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">1 272</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.55</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3.00</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">1.12</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.031</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">Variable dem_func (1 = sehr zufrieden … 4 = sehr unzufrieden), nach Siedlungstyp</div></div>","q":"Was sagt der Vergleich der Standardabweichungen (Stadt 0.74, Land 1.12) aus?","opts":[["Die Antworten der Landbevölkerung liegen deutlich weiter auseinander als die der Stadtbevölkerung.","Richtig. Die größere SD zeigt: Auf dem Land sind die Einschätzungen heterogener, in der Stadt einheitlicher."],["Die Landbevölkerung ist zufriedener, weil ihre Standardabweichung größer ist als die der Stadt.","Die SD sagt nichts über die Höhe der Zufriedenheit, nur über die Streuung. (Und auf dieser Skala heißt ein höherer Wert sogar unzufriedener.)"],["SD = 0.74 bedeutet, dass 74 % der Stadtbevölkerung Werte innerhalb einer SD um den Mittelwert haben.","Die SD ist kein Prozentanteil, sondern ein Abstand in Skaleneinheiten."],["Streuungen lassen sich nur vergleichen, wenn beide Gruppen gleich groß sind – das ist hier nicht der Fall.","Die SD ist von der Gruppengröße weitgehend unabhängig und lässt sich auch bei ungleichen Gruppen vergleichen."]],"c":0},{"id":"A04","topic":"z-Werte","title":"z-Wert – Interpretation","transfer":false,"scen":"<div style=\"border-left:4px solid #64748b;background:#f8fafc;color:#111;padding:10px 14px;margin:8px 0;border-radius:4px;line-height:1.55\">Eine befragte Person hat auf der Skala <i>dem_func</i> den Wert <b>3.10</b>. In der Stadtbevölkerung gilt: <b>M = 2.38, SD = 0.74</b>.<br>z = (3.10 − 2.38) / 0.74 = +0.97 ≈ <b>+1.0</b></div>","q":"Was sagt der z-Wert von +1.0 über diese Person aus?","opts":[["Die Person hat genau den durchschnittlichen Wert der Stadtbevölkerung, denn z liegt nahe bei 1.","Der Mittelwert entspricht z = 0. z = +1.0 heißt: eine SD darüber."],["Die Person gehört zu den obersten 2 % der Verteilung, weil ihr z-Wert positiv ist.","Die obersten ca. 2,5 % beginnen erst bei z ≈ +2. Bei z = +1 liegen noch rund 16 % höher."],["Der Wert der Person ist statistisch signifikant vom Mittelwert der Gruppe verschieden.","Ein z-Wert beschreibt die Lage eines Einzelwerts in der Verteilung – keinen Signifikanztest."],["Die Person liegt eine Standardabweichung über dem Mittelwert der Stadtbevölkerung.","Richtig. z gibt den Abstand zum Mittelwert in Standardabweichungen an. Auf dieser Skala heißt das: eher unzufrieden."]],"c":3},{"id":"A05","topic":"Normalverteilung","title":"68-95-99,7-Regel – Anwendung auf Output","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\"></th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">trust_inst</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">N</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3 847</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Mittelwert</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">30.2</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Standardabweichung</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">6.1</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">trust_inst: Summenskala Vertrauen in Institutionen (10–50)</div></div><div style=\"border-left:4px solid #64748b;background:#f8fafc;color:#111;padding:10px 14px;margin:8px 0;border-radius:4px;line-height:1.55\">Eine Auszählung ergibt: <b>95,1 %</b> der Befragten haben Werte zwischen <b>18.0 und 42.4</b> (also zwischen M − 2 SD und M + 2 SD).</div>","q":"Womit stimmt dieser Anteil von ~95 % überein, und was lässt sich daraus schließen?","opts":[["Mit dem Signifikanzniveau α = .05: 95 % der Befragten sind statistisch unauffällig.","α = .05 gehört zum Hypothesentest, nicht zur Beschreibung einer Verteilung."],["Mit der 68-95-99,7-Regel: Die Skala ist annähernd normalverteilt.","Richtig. Bei Normalverteilung liegen ca. 95 % der Werte im Bereich M ± 2 SD – genau das zeigt die Auszählung."],["Mit dem Median: 95 % aller Werte liegen unterhalb des Medians dieser Skala.","Unterhalb des Medians liegen per Definition 50 % der Werte."],["Mit nichts Bestimmtem – der Anteil ist zufällig und hat keinen theoretischen Bezug.","Der Anteil passt genau zur 68-95-99,7-Regel – das ist kein Zufall."]],"c":1},{"id":"A06","topic":"Hypothesenlogik","title":"Nullhypothese im t-Test-Output lesen","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">t-Test für unabhängige Stichproben</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\"></th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Statistik</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">df</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">p</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Mittl. Diff.</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Cohen's d</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">pint · Student's t</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">−2.05</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">1 682</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">.041</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">−0.10</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">−0.11</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">Gruppen: Berufsausbildung vs. Hochschule · H₁: μ<sub>Berufsausb.</sub> ≠ μ<sub>Hochschule</sub> · pint: Politisches Interesse</div></div>","q":"Welche H₀ wurde hier geprüft, und welche Entscheidung folgt aus p = .041 (α = .05)?","opts":[["H₀: kein Unterschied im politischen Interesse; p = .041 liegt unter α → H₀ verwerfen.","Richtig. H₀ = kein Unterschied. p &lt; .05 → H₀ verwerfen. (Mit d = −0.11 ist der Unterschied allerdings sehr klein.)"],["H₀: kein Unterschied im politischen Interesse; p = .041 liegt über α → H₀ beibehalten.",".041 ist kleiner als .05, nicht größer. Also wird H₀ verworfen."],["H₀: Hochgebildete haben mehr politisches Interesse; p = .041 bestätigt diese H₀.","Die H₀ behauptet „kein Unterschied“. Und ein kleiner p-Wert spricht gegen die H₀, nicht für sie."],["H₀: Die Daten sind normalverteilt; p = .041 zeigt eine Verletzung dieser Voraussetzung.","Das wäre die Logik eines Normalverteilungstests. Hier wird ein Mittelwertsunterschied geprüft."]],"c":0},{"id":"A07","topic":"Fehlerarten","title":"Fehlerarten – α-Fehler","transfer":false,"scen":"<div style=\"border-left:4px solid #64748b;background:#f8fafc;color:#111;padding:10px 14px;margin:8px 0;border-radius:4px;line-height:1.55\">Eine Studie findet <b>p = .03</b> und verwirft die Nullhypothese. Eine große Replikationsstudie zeigt später: In der Grundgesamtheit gibt es <b>keinen Effekt</b>.</div>","q":"Welcher Fehler wurde in der ursprünglichen Studie gemacht?","opts":[["β-Fehler: Ein in Wahrheit vorhandener Effekt wurde in der Studie übersehen.","Beim β-Fehler wird die H₀ fälschlich beibehalten. Hier wurde sie aber verworfen."],["Stichprobenfehler: Die Stichprobe war offenbar nicht repräsentativ ausgewählt.","Darüber sagt das Szenario nichts. Auch bei einer guten Zufallsstichprobe kann ein α-Fehler passieren."],["α-Fehler: Die H₀ wurde verworfen, obwohl sie in Wahrheit gilt.","Richtig. α-Fehler = falsch-positiv. Bei α = .05 nimmt man dieses Risiko bewusst in Kauf."],["Gar kein Fehler, denn bei p = .03 darf man die H₀ in jedem Fall verwerfen.","Die Entscheidung war regelkonform – aber sie war falsch. Genau das ist ein α-Fehler."]],"c":2},{"id":"A08","topic":"Standardfehler","title":"Standardfehler und Stichprobengröße","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\"></th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">pint</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">N</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3 953</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Mittelwert</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">3.12</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Std.-fehler des Mittelwerts</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.017</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Standardabweichung</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">1.07</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">pint: Politisches Interesse (1–5)</div></div>","q":"Warum ist der Std.-fehler (0.017) so viel kleiner als die Standardabweichung (1.07)?","opts":[["Weil vor der Analyse alle Ausreißer entfernt wurden und die Daten dadurch weniger streuen.","Das würde die SD verkleinern, erklärt aber nicht den Abstand zwischen SE und SD."],["Weil der Standardfehler nur die Streuung der mittleren 50 % der Daten misst.","Das beschreibt eher den Interquartilsabstand. Der SE ist die Streuung der Stichprobenmittelwerte."],["Weil der Standardfehler per Definition immer etwa ein Sechzigstel der SD beträgt.","Das Verhältnis hängt von n ab: SE = SD / √n. Hier ist √3 953 ≈ 63 – deshalb dieses Verhältnis."],["Weil Mittelwerte großer Stichproben viel weniger schwanken als einzelne Antworten.","Richtig. SE = SD / √n. Bei n = 3 953 ist der Mittelwert sehr präzise geschätzt, obwohl die Einzelwerte stark streuen."]],"c":3},{"id":"A09","topic":"Standardfehler","title":"Standardfehler – Präzision im Gruppenvergleich","transfer":false,"scen":"<div style=\"border:1px solid #cbd5e1;border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff;color:#111;overflow-x:auto\"><div style=\"font-weight:700;font-size:14px;margin-bottom:4px\">Deskriptivstatistik für die Gruppen</div><table style=\"border-collapse:collapse;font-size:14px;margin:6px 0;min-width:60%\"><tr><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Gruppe</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">N</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Mittelwert</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Std.-abw.</th><th style=\"border-bottom:2px solid #333;padding:5px 10px;text-align:left;font-weight:600;background:#f3f4f6\">Std.-fehler</th></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Großstadt</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2 684</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.38</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.74</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.014</td></tr><tr><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">Dorf</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">87</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">2.51</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.79</td><td style=\"border-bottom:1px solid #ddd;padding:5px 10px;text-align:left\">0.085</td></tr></table><div style=\"font-size:12.5px;color:#475569;margin-top:6px\">Variable dem_func (1 = sehr zufrieden … 4 = sehr unzufrieden)</div></div>","q":"Was lässt sich aus dem Vergleich der Standardfehler (0.014 vs. 0.085) schließen?","opts":[["Der Mittelwert der Großstadt ist viel präziser geschätzt, weil dort sehr viel mehr Personen befragt wurden.","Richtig. SE = SD / √n: Bei n = 2 684 ist der SE klein, bei n = 87 groß – obwohl beide Gruppen ähnlich streuen."],["Die Dorfbevölkerung ist unzufriedener, und das zeigt sich an ihrem deutlich größeren Standardfehler.","Der SE sagt nichts über die Höhe der Zufriedenheit, nur über die Präzision des Mittelwerts."],["Die Werte der Dorfbevölkerung streuen viel stärker um ihren Mittelwert als die der Großstadt.","Die Streuung zeigt die SD – und die ist fast gleich (0.74 vs. 0.79). Der Unterschied im SE kommt von n."],["Ein Standardfehler über 0.05 ist zu groß; der Mittelwert der Dorfgruppe ist damit unbrauchbar.","Es gibt keine feste Grenze. Ein größerer SE heißt: unsicherere Schätzung – nicht unbrauchbar."]],"c":0},{"id":"A10","topic":"Transfer: Lagemaß wählen","title":"Transfer: Lagemaß bei schiefer Verteilung","transfer":true,"scen":"<div style=\"border-left:4px solid #64748b;background:#f8fafc;color:#111;padding:10px 14px;margin:8px 0;border-radius:4px;line-height:1.55\">Ein Sozialbericht über die Nettoeinkommen in einem Stadtteil zeigt:<br><b>Mittelwert 2 900 € · Median 1 950 € · SD 2 400 €</b><br><br>Ein Stadtrat fragt: <i>„Was verdient eine typische Person in diesem Stadtteil?“</i></div>","q":"Welche Antwort ist inhaltlich angemessen?","opts":[["2 900 € – der Mittelwert nutzt alle Datenwerte und ist deshalb immer die präziseste Angabe.","Gerade weil er alle Werte nutzt, wird der Mittelwert von wenigen sehr hohen Einkommen nach oben gezogen."],["Beide Werte beschreiben das typische Einkommen gleich gut; man kann sich einen aussuchen.","Bei einer deutlich schiefen Verteilung beschreiben Mittelwert und Median Verschiedenes."],["1 950 € – wenige hohe Einkommen ziehen den Mittelwert nach oben; der Median trifft „typisch“ besser.","Richtig. Mittelwert deutlich über dem Median → rechtsschief. Der Median teilt die Befragten in zwei gleich große Hälften."],["Keine Angabe ist sinnvoll, weil bei einer so großen SD kein Lagemaß zuverlässig ist.","Eine große SD macht Lagemaße nicht unbrauchbar. Man muss nur das passende wählen."]],"c":2}];
 
-const items = [
-  {
-    id:"a01",type:"mc",transfer:false,
-    title:"Standardfehler – Was bedeutet er?",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik</div>
-        <table><tr><th></th><th>dem_func</th></tr>
-          <tr><td>N</td><td>2 684</td></tr>
-          <tr><td>Mittelwert</td><td>2.38</td></tr>
-          <tr><td>Std.-fehler des Mittelwerts</td><td>0.014</td></tr>
-          <tr><td>Standardabweichung</td><td>0.740</td></tr>
-        </table>
-        <div class="ann">dem_func: Zufriedenheit mit dem Funktionieren der Demokratie (Skala 1–4; nur Stadtbevölkerung)</div>
-      </div></div>`,
-    question:"Was beschreibt der <b>Std.-fehler des Mittelwerts</b> von 0.014 in diesem Output?",
-    options:[
-      "Die Streuung der einzelnen Befragten um ihren Mittelwert",
-      "Die geschätzte Streuung der Stichprobenmittelwerte um den wahren Populationswert",
-      "Den Messfehler des Befragungsinstruments",
-      "Die Differenz zwischen Mittelwert und Median"
-    ],
-    correct:1,
-    feedback:[
-      "Das beschreibt die <em>Standardabweichung</em> (hier 0.740) – sie zeigt, wie stark Einzelwerte um den Mittelwert streuen.",
-      "Richtig. Der SE schätzt, wie stark der Mittelwert von Stichprobe zu Stichprobe schwanken würde. SE = SD / √n – je größer n, desto kleiner und präziser.",
-      "Messfehler ist ein Gütekriterium des Erhebungsinstruments (Reliabilität), nicht des Stichprobenmittelwerts.",
-      "Das wäre ein Maß für die Schiefe. Der SE beschreibt die Präzision des Mittelwerts als Schätzer für die Population."
-    ]
-  },
-  {
-    id:"a02",type:"mc",transfer:false,
-    title:"Mittelwert vs. Median – Schiefe Verteilung",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik</div>
-        <table><tr><th></th><th>hh_inc</th></tr>
-          <tr><td>N</td><td>3 847</td></tr>
-          <tr><td>Mittelwert</td><td>4.82</td></tr>
-          <tr><td>Median</td><td>2.80</td></tr>
-          <tr><td>Standardabweichung</td><td>2.94</td></tr>
-        </table>
-        <div class="ann">hh_inc: Haushaltseinkommen (10 Kategorien; 1 = unter 500 €, 10 = über 5 000 €)</div>
-      </div></div>`,
-    question:"Was lässt sich aus dem deutlichen Unterschied zwischen Mittelwert (4.82) und Median (2.80) schließen?",
-    options:[
-      "Die Daten enthalten Eingabefehler und müssen bereinigt werden",
-      "Die Verteilung ist linksschief – wenige sehr niedrige Werte ziehen den Mittelwert nach unten",
-      "Die Verteilung ist rechtsschief – wenige sehr hohe Einkommenswerte ziehen den Mittelwert nach oben",
-      "Der Median ist für diese Variablenart nicht geeignet"
-    ],
-    correct:2,
-    feedback:[
-      "Nicht zwingend. Große Abweichungen zwischen Mittelwert und Median sind bei Einkommensdaten typisch und inhaltlich erklärbar, kein Fehler.",
-      "Falsch herum. Bei Linksschiefe liegt der Mittelwert <em>unter</em> dem Median. Hier ist der Mittelwert höher – das ist ein Zeichen für Rechtsschiefe.",
-      "Richtig. Hohe Einkommen weniger Befragter ziehen den Mittelwert nach oben. Der Median bleibt robust. Bei Einkommensdaten ist er deshalb oft aussagekräftiger.",
-      "Der Median ist bei ordinalen und metrischen Variablen durchaus anwendbar – gerade bei schiefen Verteilungen sogar besonders geeignet."
-    ]
-  },
-  {
-    id:"a03",type:"mc",transfer:false,
-    title:"Standardabweichung – Gruppenvergleich",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik für die Gruppen</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik für die Gruppen</div>
-        <table>
-          <tr><th>Gruppe</th><th>N</th><th>Mittelwert</th><th>Median</th><th>Std.-abw.</th><th>Std.-fehler</th></tr>
-          <tr><td>Stadt</td><td>2 684</td><td>2.38</td><td>2.00</td><td>0.74</td><td>0.014</td></tr>
-          <tr><td>Land</td><td>1 272</td><td>2.55</td><td>3.00</td><td>1.43</td><td>0.040</td></tr>
-        </table>
-        <div class="ann">Variable dem_func, aufgeschlüsselt nach Siedlungstyp</div>
-      </div></div>`,
-    question:"Was sagt der Vergleich der Standardabweichungen (Stadt: 0.74 / Land: 1.43) aus?",
-    options:[
-      "Die Landbevölkerung ist zufriedener, weil ihre SD größer ist",
-      "Die Werte der Landbevölkerung streuen fast doppelt so stark wie jene der Stadtbevölkerung",
-      "SD = 0.74 bedeutet, dass 74 % der Stadtwerte im Bereich 1–4 liegen",
-      "Streuungsvergleiche sind nur bei gleich großen Gruppen sinnvoll"
-    ],
-    correct:1,
-    feedback:[
-      "Die SD ist ein Streuungsmaß, kein Lagemaß – sie sagt nichts darüber aus, ob Werte hoch oder niedrig sind, sondern wie weit sie auseinandergehen.",
-      "Richtig. SD Land (1.43) ist fast doppelt so groß wie SD Stadt (0.74) – die Meinungen auf dem Land sind deutlich heterogener.",
-      "Die SD ist keine Prozentangabe. Sie beschreibt den durchschnittlichen Abstand der Einzelwerte vom Mittelwert in der Einheit der Skala.",
-      "Stichprobengröße beeinflusst vor allem den SE, nicht direkt die SD. Streuungsvergleiche zwischen Gruppen unterschiedlicher Größe sind methodisch zulässig."
-    ]
-  },
-  {
-    id:"a04",type:"mc",transfer:false,
-    title:"z-Wert – Interpretation",
-    scenario:`<div class="scenario"><div class="scenario-lbl">🧮 Rechenbeispiel</div>
-      <div class="ctx">Eine befragte Person weist auf der zusammengesetzten Skala <em>dem_func</em> den Wert <strong>3.10</strong> auf.<br>
-        Der Mittelwert der Stadtbevölkerung beträgt <strong>M = 2.38</strong>, SD = <strong>0.74</strong>.<br><br>
-        <strong>z = (3.10 − 2.38) / 0.74 = +0.97 ≈ +1.0</strong>
-      </div></div>`,
-    question:"Was sagt der z-Wert von <b>+1.0</b> über diese Person aus?",
-    options:[
-      "Die Person liegt genau im Mittelwert der Stadtbevölkerung",
-      "Die Person liegt eine Standardabweichung über dem Mittelwert der Stadtbevölkerung",
-      "Die Person gehört zu den obersten 2 % der Verteilung",
-      "Der Wert ist statistisch signifikant von der Gruppe verschieden"
-    ],
-    correct:1,
-    feedback:[
-      "z = 0 entspricht genau dem Mittelwert. z = +1.0 liegt eine Standardabweichung <em>darüber</em>.",
-      "Richtig. z = +1.0 bedeutet: die Person liegt genau 1 SD über dem Mittelwert – im oberen Drittel der Verteilung (~84. Perzentil).",
-      "z = +1.0 entspricht ca. dem 84. Perzentil. Die obersten 2 % beginnen erst bei z ≈ +2.05.",
-      "z-Werte beschreiben die Lage in einer Verteilung – keine Signifikanz. Dafür braucht es einen Hypothesentest."
-    ]
-  },
-  {
-    id:"a05",type:"mc",transfer:false,
-    title:"68-95-99,7-Regel – Anwendung auf Output",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik + Zusatzinfo</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik</div>
-        <table><tr><th></th><th>dem_func</th></tr>
-          <tr><td>N</td><td>3 847</td></tr>
-          <tr><td>Mittelwert</td><td>2.40</td></tr>
-          <tr><td>Standardabweichung</td><td>0.75</td></tr>
-        </table>
-      </div>
-      <div class="ctx" style="margin-top:10px">Eine Auszählung im Datensatz ergibt: <strong>94.7 %</strong> der Befragten haben Werte im Bereich von 0.90 bis 3.90 (also zwischen M − 2 SD und M + 2 SD).</div>
-    </div>`,
-    question:"Womit stimmt dieser Anteil von ~95 % überein, und was lässt sich daraus schließen?",
-    options:[
-      "Mit dem Signifikanzniveau α = .05: 95 % der Befragten sind statistisch nicht auffällig",
-      "Mit der 68-95-99,7-Regel: ~95 % der Werte liegen im Bereich M ± 2 SD – ein Hinweis, dass die Variable annähernd normalverteilt ist",
-      "Mit dem Median: 95 % aller Werte liegen unterhalb des Medians",
-      "Es ist ein zufälliger Anteil ohne theoretischen Bezug"
-    ],
-    correct:1,
-    feedback:[
-      "Das Signifikanzniveau α regelt Entscheidungsfehler bei Hypothesentests – es hat nichts mit der Verteilung von Datenwerten zu tun.",
-      "Richtig. Die 68-95-99,7-Regel besagt: bei Normalverteilung liegen ~95 % im Bereich M ± 2 SD. Dass das hier zutrifft, ist ein Indiz für annähernde Normalverteilung.",
-      "Der Median teilt die Verteilung bei genau 50 %, nicht 95 %.",
-      "Der Anteil entspricht einer wohlbekannten theoretischen Vorhersage der Normalverteilung – alles andere als zufällig."
-    ]
-  },
-  {
-    id:"a06",type:"mc",transfer:false,
-    title:"Nullhypothese im t-Test-Output lesen",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · t-Test für unabhängige Stichproben (Ausschnitt)</div>
-      <div class="jmv"><div class="jmv-h">t-Test für unabhängige Stichproben</div>
-        <table>
-          <tr><th></th><th>Statistik</th><th>df</th><th>p</th><th>Mittl. Diff.</th><th>Cohen's d</th></tr>
-          <tr><td>pint &nbsp; Student's t</td><td>−3.84</td><td>1 682</td><td>.041</td><td>−0.18</td><td>−0.21</td></tr>
-        </table>
-        <div class="ann">Anmerkung. Hₐ μBerufsausb. ≠ μHochschule &nbsp;|&nbsp; AV: pint (Politisches Interesse)</div>
-      </div></div>`,
-    question:"Welche H₀ wurde hier geprüft, und welche Entscheidung folgt aus <b>p = .041</b> (α = .05)?",
-    options:[
-      "H₀: Hochgebildete haben mehr politisches Interesse; p = .041 bestätigt diese H₀",
-      "H₀: Es gibt keinen Unterschied im politischen Interesse; p = .041 liegt über α → H₀ beibehalten",
-      "H₀: Es gibt keinen Unterschied im politischen Interesse; p = .041 liegt unter α = .05 → H₀ verwerfen",
-      "H₀: Die Stichproben sind normalverteilt; p = .041 zeigt eine Verletzung dieser Voraussetzung"
-    ],
-    correct:2,
-    feedback:[
-      "Die H₀ behauptet immer das Fehlen eines Effekts – nie eine gerichtete Aussage. Und p = .041 führt zum Verwerfen von H₀, nicht zu ihrer Bestätigung.",
-      "Aufgepasst: p = .041 liegt unter α = .05, nicht darüber. Damit wird H₀ verworfen.",
-      "Richtig. H₀ = kein Unterschied (der Status quo). p = .041 < .05 → H₀ wird verworfen; der Unterschied ist statistisch signifikant.",
-      "Normalverteilung ist eine Voraussetzung, keine inhaltliche H₀. Die inhaltliche H₀ betrifft den Gruppenunterschied im politischen Interesse."
-    ]
-  },
-  {
-    id:"a07",type:"mc",transfer:false,
-    title:"Fehlerarten – α-Fehler (Typ I)",
-    scenario:`<div class="scenario"><div class="scenario-lbl">🔬 Forschungsszenario</div>
-      <div class="ctx">Eine Studie findet <strong>p = .03</strong> und verwirft die Nullhypothese. Eine große Replikationsstudie zeigt später: In der Grundgesamtheit gibt es <strong>keinen Effekt</strong>.</div></div>`,
-    question:"Welcher Fehler wurde in der ursprünglichen Studie gemacht?",
-    options:[
-      "β-Fehler (Typ II): Ein vorhandener Effekt wurde übersehen",
-      "α-Fehler (Typ I): Die H₀ wurde fälschlicherweise verworfen",
-      "Stichprobenfehler: Die Stichprobe war nicht repräsentativ",
-      "Kein Fehler – p = .03 erlaubt immer das Verwerfen der H₀"
-    ],
-    correct:1,
-    feedback:[
-      "β-Fehler tritt auf, wenn H₀ <em>beibehalten</em> wird, obwohl ein Effekt existiert (falsch-negativ). Hier wurde H₀ verworfen, obwohl kein Effekt vorlag.",
-      "Richtig. Wenn H₀ verworfen wird, obwohl sie in der Realität zutrifft, ist das ein α-Fehler (Typ I, falsch-positiv). Bei α = 5 % passiert das in 5 % der Fälle.",
-      "Stichprobenfehler ist kein formaler Fehlertyp der Hypothesentestlogik. α- und β-Fehler beschreiben Entscheidungsfehler, nicht Auswahlmängel.",
-      "p = .03 < .05, also ist das Vorgehen formal korrekt. Trotzdem kann H₀ wahr sein – genau das passiert in α % der Fälle."
-    ]
-  },
-  {
-    id:"a08",type:"mc",transfer:false,
-    title:"SE und Stichprobengröße",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik</div>
-        <table><tr><th></th><th>dem_func</th></tr>
-          <tr><td>N</td><td>3 981</td></tr>
-          <tr><td>Mittelwert</td><td>2.43</td></tr>
-          <tr><td>Std.-fehler des Mittelwerts</td><td>0.012</td></tr>
-          <tr><td>Standardabweichung</td><td>0.754</td></tr>
-        </table>
-      </div></div>`,
-    question:"Warum ist der Std.-fehler (0.012) so viel kleiner als die Standardabweichung (0.754)?",
-    options:[
-      "Weil Ausreißer vor der Analyse bereinigt wurden",
-      "Weil der Standardfehler nur die Streuung der mittleren 50 % der Daten misst",
-      "Weil bei n = 3 981 die theoretische Streuung der Stichprobenmittelwerte viel kleiner ist als die Streuung der Einzelwerte",
-      "Weil der Standardfehler per Definition immer kleiner als die Standardabweichung sein muss"
-    ],
-    correct:2,
-    feedback:[
-      "Ausreißerbereinigung kann die SD verändern – hat aber keinen systematischen Einfluss auf das SE-zu-SD-Verhältnis.",
-      "Der SE bezieht sich auf die gesamte Stichprobe, nicht nur auf einen Teil. Er schätzt die Variation der Mittelwerte, nicht der Einzelwerte.",
-      "Richtig. SE = SD / √n. Bei n = 3 981 ist √n ≈ 63 – der SE ist also ~63-mal kleiner als die SD. Große Stichproben liefern präzise Mittelwertschätzungen.",
-      "Es gibt keine inhaltsleere Definition – der Grund ist die Formel SE = SD / √n und das konkrete n. Bei n = 1 wären SE und SD gleich."
-    ]
-  },
-  {
-    id:"a09",type:"mc",transfer:false,
-    title:"Standardfehler – Präzision im Gruppenvergleich",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Jamovi-Output · Deskriptivstatistik für die Gruppen</div>
-      <div class="jmv"><div class="jmv-h">Deskriptivstatistik für die Gruppen</div>
-        <table>
-          <tr><th>Gruppe</th><th>N</th><th>Mittelwert</th><th>Std.-abw.</th><th>Std.-fehler</th></tr>
-          <tr><td>Großstadt (Kategorie 1)</td><td>2 684</td><td>2.38</td><td>0.74</td><td>0.014</td></tr>
-          <tr><td>Dörflich (Kategorie 4)</td><td>87</td><td>2.51</td><td>0.79</td><td>0.085</td></tr>
-        </table>
-        <div class="ann">Variable dem_func · bbsr: Siedlungsstruktur (Auswahl zweier Extreme)</div>
-      </div></div>`,
-    question:"Was lässt sich aus dem Vergleich der <b>Standardfehler</b> (0.014 vs. 0.085) schließen?",
-    options:[
-      "Die dörfliche Gruppe ist unzufriedener, weil ihr Standardfehler größer ist",
-      "Der größere SE der dörflichen Gruppe zeigt, dass ihre Werte stärker um den Mittelwert streuen als in der Großstadtgruppe",
-      "Der Mittelwert der Großstadtgruppe ist präziser geschätzt – bei n = 2 684 schwankt er kaum noch zwischen Stichproben; bei n = 87 ist die Unsicherheit deutlich größer",
-      "Ein Standardfehler über 0.05 ist grundsätzlich zu groß und macht den Mittelwert unbrauchbar"
-    ],
-    correct:2,
-    feedback:[
-      "Der Standardfehler ist ein Präzisionsmaß, kein Lagemaß. Er sagt nichts darüber aus, ob Werte hoch oder niedrig sind.",
-      "Die Streuung der Einzelwerte beschreibt die Standardabweichung (hier sehr ähnlich: 0.74 vs. 0.79). Der SE beschreibt dagegen die Unsicherheit des Mittelwerts als Schätzer – und hängt vor allem von n ab.",
-      "Richtig. SE = SD / √n. Bei n = 2 684 ist √n ≈ 52, bei n = 87 ist √n ≈ 9. Der SE ist bei der Großstadtgruppe deshalb ~6-mal kleiner – ihr Mittelwert ist viel präziser bestimmt.",
-      "Für den SE gibt es keinen universellen Grenzwert – er muss immer im Verhältnis zur Skala und zum n beurteilt werden."
-    ]
-  },
-  {
-    id:"a10",type:"mc",transfer:true,
-    title:"🧠 Transfer: Lagemaß bei schiefer Verteilung",
-    scenario:`<div class="scenario"><div class="scenario-lbl">📊 Praxisbeispiel – Sozialbericht</div>
-      <div class="ctx">Ein Bericht über Einkommen in einem Sozialraum zeigt:<br><br>
-        <strong>Mittelwert: 6.800 €</strong> &nbsp;|&nbsp; <strong>Median: 3.200 €</strong> &nbsp;|&nbsp; <strong>SD: 9.400 €</strong>
-      </div></div>`,
-    question:"Ein Stadtrat fragt: <b>&#8222;Was verdient eine typische Person in diesem Sozialraum?&#8221;</b><br>Welche Antwort ist inhaltlich angemessen?",
-    options:[
-      "6.800 € – der Mittelwert nutzt alle Datenwerte und ist immer die präziseste Angabe",
-      "Beide Angaben beschreiben den typischen Wert gleich gut",
-      "3.200 € – die rechtschiefe Verteilung (wenige sehr Reiche) verzerrt den Mittelwert; der Median ist der bessere Wert für &#8222;typisch&#8221;",
-      "Keine Angabe sinnvoll – bei so großer SD ist kein Lagemaß zuverlässig"
-    ],
-    correct:2,
-    feedback:[
-      "Bei schiefen Verteilungen ist der Mittelwert kein gutes Maß für 'typisch' – er wird von wenigen Extremwerten nach oben gezogen und repräsentiert die Mehrheit schlecht.",
-      "Das stimmt nur bei symmetrischen Verteilungen. Die große Differenz zwischen M und Median (3.600 €!) zeigt deutliche Rechtsschiefe.",
-      "Richtig. Der Median teilt die Verteilung in zwei gleich große Hälften und ist robust gegenüber Ausreißern. Bei Einkommensdaten ist er deshalb die ehrlichere Aussage.",
-      "Hohe SD bedeutet Streuung, macht Lagemaße aber nicht unbrauchbar. Gerade dann ist die Wahl des richtigen Lagemaßes besonders wichtig."
-    ]
+const $ = id => document.getElementById(id);
+const L = 'ABCD';
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+const EXAM = CONFIG.mode === 'exam';
+const grade = p => { if (!CONFIG.grades) return null; return CONFIG.grades.find(g => p >= g[0])[1]; };
+
+let S;
+function init() {
+  const order = CONFIG.shuffleItems ? shuffle(ITEMS) : ITEMS.slice();
+  S = {
+    items: order.map(it => { const perm = shuffle([0, 1, 2, 3]); return { ...it, perm }; }),
+    ans: {}, checked: {}, flag: {}, tItem: {}, cur: 0, t0: null, tEnter: null, done: false, timerId: null
+  };
+}
+
+$('intro').innerHTML = CONFIG.intro;
+$('go').onclick = () => {
+  init();
+  $('start').classList.add('hidden'); $('quiz').classList.remove('hidden');
+  if (EXAM) { $('nav').classList.remove('hidden'); $('submitTop').classList.remove('hidden'); }
+  S.t0 = Date.now();
+  if (CONFIG.timeMin) { $('timer').classList.remove('hidden'); tick(); S.timerId = setInterval(tick, 500); }
+  if (EXAM) window.onbeforeunload = e => { if (!S.done) { e.preventDefault(); e.returnValue = ''; } };
+  show(0);
+};
+
+function tick() {
+  const left = CONFIG.timeMin * 60 - (Date.now() - S.t0) / 1000;
+  $('timer').textContent = fmt(left);
+  $('timer').classList.toggle('warn', left <= 300);
+  if (left <= 0) finish(true);
+}
+
+function leave() { if (S.tEnter != null) { const id = S.items[S.cur].id; S.tItem[id] = (S.tItem[id] || 0) + (Date.now() - S.tEnter) / 1000; } }
+
+function show(i) {
+  leave(); S.cur = i; S.tEnter = Date.now();
+  const it = S.items[i], n = S.items.length;
+  const chosen = S.ans[it.id], checked = !!S.checked[it.id];
+  const opts = it.perm.map((oi, k) => {
+    let cls = 'opt';
+    if (checked) { if (oi === it.c) cls += ' ok'; else if (oi === chosen) cls += ' no'; }
+    else if (oi === chosen) cls += ' sel';
+    return `<div class="${cls}" data-oi="${oi}"><span class="lt">${L[k]}</span><div>${it.opts[oi][0]}</div></div>`;
+  }).join('');
+  let fb = '';
+  if (checked) {
+    const ok = chosen === it.c;
+    fb = `<div class="fb ${ok ? 'ok' : 'no'}"><b>${ok ? 'Richtig.' : 'Leider falsch.'}</b> ${it.opts[chosen][1]}${ok ? '' : `<br><br><b>Richtig wäre ${L[it.perm.indexOf(it.c)]}:</b> ${it.opts[it.c][1].replace(/^Richtig\.\s*/, '')}`}</div>`;
   }
-];
+  const last = i === n - 1;
+  let right;
+  if (EXAM) right = last ? `<button id="fin">Abgeben</button>` : `<button id="next">Weiter</button>`;
+  else if (!checked) right = `<button id="chk" ${chosen == null ? 'disabled' : ''}>Antwort prüfen</button>`;
+  else right = last ? `<button id="fin">Zur Auswertung</button>` : `<button id="next">Nächste Aufgabe</button>`;
+  const left = EXAM
+    ? `<div style="display:flex;gap:8px"><button class="sec" id="prev" ${i === 0 ? 'disabled' : ''}>Zurück</button><button class="flagbtn ${S.flag[it.id] ? 'on' : ''}" id="flg">${S.flag[it.id] ? '⚑ markiert' : '⚐ markieren'}</button></div>`
+    : `<span class="note" style="margin:0">Aufgabe ${i + 1} von ${n}</span>`;
 
-// ===== Engine =====
-const TOTAL = items.length;
-let state = (() => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } })();
-if (!state.idx && state.idx !== 0) state = { idx:0, points:0, done:{} };
+  $('itemcard').className = 'card' + (checked ? ' locked' : '');
+  $('itemcard').innerHTML = `
+    <div class="ititle"><span>Aufgabe ${i + 1}</span>${EXAM ? '' : `<span class="pill">${it.topic}</span>`}</div>
+    <div class="scen">${it.scen}</div>
+    <div class="q">${it.q}</div>
+    <div id="opts">${opts}</div>${fb}
+    <div class="btns">${left}${right}</div>`;
 
-function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){} }
-
-function setBar(){
-  document.getElementById("bar").style.width = (state.idx / TOTAL * 100) + "%";
-  document.getElementById("points").textContent = state.points;
-  document.getElementById("maxpoints").textContent = TOTAL;
-  document.getElementById("idx").textContent = Math.min(state.idx + 1, TOTAL);
-  document.getElementById("total").textContent = TOTAL;
+  if (!checked) document.querySelectorAll('#opts .opt').forEach(el => el.onclick = () => choose(+el.dataset.oi));
+  const b = (id, f) => { const e = $(id); if (e) e.onclick = f; };
+  b('next', () => show(i + 1)); b('prev', () => show(i - 1)); b('fin', () => EXAM ? confirmSubmit() : finish(false));
+  b('chk', () => { S.checked[it.id] = true; show(i); });
+  b('flg', () => { S.flag[it.id] = !S.flag[it.id]; show(i); });
+  $('submitTop').onclick = confirmSubmit;
+  progress(); window.scrollTo(0, 0);
 }
 
-function render(){
-  const it = items[state.idx];
-  document.getElementById("title").innerHTML =
-    `${state.idx + 1}. ${it.title} ${it.transfer ? '<span class="badge">🧠 TRANSFER</span>' : ""}`;
-  document.getElementById("scenario-wrap").innerHTML = it.scenario || "";
-  document.getElementById("question").innerHTML = it.question;
-  document.getElementById("feedback").innerHTML = "";
-  document.getElementById("feedback").className = "";
-
-  const wrap = document.getElementById("options");
-  wrap.innerHTML = "";
-  const nextBtn = document.getElementById("nextBtn");
-  nextBtn.disabled = true;
-  document.getElementById("prevBtn").disabled = state.idx === 0;
-
-  it.options.forEach((opt, i) => {
-    const row = document.createElement("label");
-    row.className = "opt";
-    const inp = document.createElement("input");
-    inp.type = "radio"; inp.name = it.id; inp.value = i;
-    const span = document.createElement("span");
-    span.innerHTML = opt;
-    row.appendChild(inp); row.appendChild(span);
-    row.addEventListener("click", () => {
-      const correct = i === it.correct;
-      document.querySelectorAll("label.opt").forEach(l => {
-        const v = parseInt(l.querySelector("input").value);
-        if (v === i) l.classList.add(correct ? "correct" : "incorrect");
-        l.querySelector("input").disabled = true;
-      });
-      const fb = document.getElementById("feedback");
-      fb.innerHTML = (correct ? "✓ " : "✗ ") + it.feedback[i];
-      fb.className = "fb " + (correct ? "ok" : "bad");
-      if (!(it.id in state.done)) {
-        state.points += correct ? 1 : 0;
-        state.done[it.id] = correct ? "ok" : "no";
-        save();
-        setBar();  // update points display immediately
-      }
-      nextBtn.disabled = false;
-    });
-    wrap.appendChild(row);
-  });
-  setBar();
+function choose(oi) {
+  const it = S.items[S.cur]; S.ans[it.id] = oi;
+  document.querySelectorAll('#opts .opt').forEach(el => el.classList.toggle('sel', +el.dataset.oi === oi));
+  const c = $('chk'); if (c) c.disabled = false;
+  progress();
 }
 
-document.getElementById("nextBtn").addEventListener("click", () => {
-  if (state.idx < TOTAL - 1) { state.idx++; save(); render(); }
-  else { showDone(); }
-});
+function progress() {
+  const n = S.items.length, a = Object.keys(S.ans).length;
+  const done = EXAM ? a : Object.keys(S.checked).length;
+  $('progt').textContent = EXAM ? `${a} von ${n} beantwortet` : `${done} von ${n} bearbeitet`;
+  $('progb').style.width = (done / n * 100) + '%';
+  if (EXAM) $('nav').innerHTML = S.items.map((it, k) =>
+    `<button class="${S.ans[it.id] != null ? 'done' : ''} ${k === S.cur ? 'cur' : ''} ${S.flag[it.id] ? 'flag' : ''}" data-k="${k}" title="Aufgabe ${k + 1}">${k + 1}</button>`).join('');
+  document.querySelectorAll('#nav button').forEach(el => el.onclick = () => show(+el.dataset.k));
+}
 
-function showDone(){
-  const pct = Math.round(state.points / TOTAL * 100);
-  const grade = pct >= 85 ? "Sehr gut" : pct >= 70 ? "Gut" : pct >= 55 ? "Befriedigend" : pct >= 40 ? "Ausreichend" : "Nicht bestanden";
-  document.querySelector(".card").innerHTML = `
-    <div style="text-align:center;padding:16px 0 8px">
-      <div style="font-size:48px;margin-bottom:12px">🎉</div>
-      <div style="font-size:28px;font-weight:800;margin-bottom:6px">${state.points} / ${TOTAL} Punkte</div>
-      <div style="font-size:15px;color:var(--accent);font-weight:700;margin-bottom:4px">${pct} % · ${grade}</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:8px">Übung abgeschlossen. Die Korrektantworten wurden pro Frage angezeigt.</div>
+function modal(html) { $('modalc').innerHTML = html; $('modal').classList.add('on'); }
+function closeModal() { $('modal').classList.remove('on'); }
+
+function confirmSubmit() {
+  const open = S.items.map((it, k) => S.ans[it.id] == null ? k + 1 : null).filter(x => x);
+  const fl = S.items.map((it, k) => S.flag[it.id] ? k + 1 : null).filter(x => x);
+  modal(`<h2 style="margin-top:0;font-size:18px">Wirklich abgeben?</h2>
+    ${open.length ? `<p>Noch <b>unbeantwortet</b>: Aufgabe ${open.join(', ')}</p>` : '<p>Alle Aufgaben sind beantwortet.</p>'}
+    ${fl.length ? `<p>Noch <b>markiert</b>: Aufgabe ${fl.join(', ')}</p>` : ''}
+    <p class="note">Nach der Abgabe sind keine Änderungen mehr möglich.</p>
+    <div class="btns"><button class="sec" id="mBack">Zurück zum Test</button><button id="mGo">Jetzt abgeben</button></div>`);
+  $('mBack').onclick = closeModal; $('mGo').onclick = () => { closeModal(); finish(false); };
+}
+
+async function finish(timeout) {
+  if (S.done) return; S.done = true; leave(); clearInterval(S.timerId); window.onbeforeunload = null; closeModal();
+  const used = (Date.now() - S.t0) / 1000;
+  const n = S.items.length;
+  const items = CONFIG.shuffleItems ? S.items.slice().sort((a, b) => ITEMS.findIndex(x => x.id === a.id) - ITEMS.findIndex(x => x.id === b.id)) : S.items;
+  const pts = items.reduce((s, it) => s + (S.ans[it.id] === it.c ? 1 : 0), 0);
+  const g = grade(pts);
+
+  const rv = items.map((it, k) => {
+    const ch = S.ans[it.id], ok = ch === it.c;
+    return `<div class="rv"><h3><span class="mark ${ok ? 'ok' : 'no'}">${ok ? '✓ richtig' : (ch == null ? '– keine Antwort' : '✗ falsch')}</span>${it.title}</h3>
+      ${ch != null && !ok ? `<div class="line"><b>Deine Antwort:</b> ${it.opts[ch][0]}<br><span style="color:#fca5a5">${it.opts[ch][1]}</span></div>` : ''}
+      <div class="line"><b>Richtige Antwort:</b> ${it.opts[it.c][0]}<br><span style="color:#a7f3d0">${it.opts[it.c][1]}</span></div>
+      <details><summary>Aufgabe noch einmal ansehen</summary><div class="scen">${it.scen}</div><div class="q">${it.q}</div></details></div>`;
+  }).join('');
+
+  $('quiz').classList.add('hidden'); $('result').classList.remove('hidden');
+  $('result').innerHTML = `
+    <div class="kurs">${CONFIG.kurs}</div><h1>${CONFIG.title} – Auswertung</h1>
+    ${timeout ? '<div class="fb no" style="margin-top:10px">Die Zeit ist abgelaufen – der Test wurde automatisch abgegeben.</div>' : ''}
+    <div class="card">
+      <div class="big">${pts} / ${n} Punkte${g ? `<span class="grade">Note ${g}</span>` : ''}</div>
+      <div class="stats"><span>${Math.round(pts / n * 100)} % richtig</span>${CONFIG.timeMin ? `<span>Benötigte Zeit: ${fmt(Math.min(used, CONFIG.timeMin * 60))} von ${CONFIG.timeMin}:00 min</span>` : ''}</div>
+      ${g ? '<p class="note">Die Note dient nur zur Orientierung und folgt dem Notenschlüssel des echten CA 2.</p>' : ''}
+      <div id="sendstate" class="note"></div>
+      <div class="btns" style="justify-content:flex-start"><button id="again">Neuer Durchgang</button></div>
     </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
-      <button onclick="resetQuiz()">↺ Neu starten</button>
-    </div>`;
-  document.getElementById("bar").style.width = "100%";
-  document.getElementById("points").textContent = state.points;
-}
+    <div class="card"><h2 style="margin:0 0 4px;font-size:18px">Alle Aufgaben mit Lösung</h2>${rv}</div>`;
+  $('again').onclick = () => location.reload();
+  window.scrollTo(0, 0);
 
-function resetQuiz(){
-  if (confirm("Fortschritt löschen und neu starten?")) {
-    try { localStorage.removeItem(LS_KEY); } catch(e){}
-    state = { idx:0, points:0, done:{} }; save(); location.reload();
+  if (CONFIG.submit) {
+    $('sendstate').textContent = 'Ergebnis wird anonym übermittelt …';
+    const fd = new FormData();
+    fd.append('_subject', `${CONFIG.submit.label} | anonym | ${pts}/${n} | ${fmt(used)} min${timeout ? ' | Zeit abgelaufen' : ''}`);
+    fd.append('_template', 'table');
+    fd.append('Test', CONFIG.title);
+    fd.append('Punkte', `${pts}/${n}`);
+    fd.append('Benötigte Zeit', fmt(used) + ' min' + (timeout ? ' (abgelaufen)' : ''));
+    items.forEach(it => {
+      const ch = S.ans[it.id];
+      fd.append(it.id, `${ch == null ? 'keine Antwort' : ch === it.c ? 'richtig' : 'falsch (' + 'ABCD'[ch] + ')'} · ${fmt(S.tItem[it.id] || 0)} min`);
+    });
+    try {
+      const r = await fetch('https://formsubmit.co/ajax/' + CONFIG.submit.email, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+      const j = await r.json();
+      $('sendstate').textContent = (j.success === true || j.success === 'true') ? '✓ Ergebnis wurde anonym übermittelt (ohne Namen, ohne Matrikelnummer).' : 'Übermittlung hat nicht geklappt – kein Problem, deine Auswertung oben bleibt gültig.';
+    } catch (e) { $('sendstate').textContent = 'Übermittlung hat nicht geklappt – kein Problem, deine Auswertung oben bleibt gültig.'; }
   }
 }
-document.getElementById("prevBtn").addEventListener("click", () => {
-  if (state.idx > 0) { state.idx--; save(); render(); }
-});
-document.getElementById("resetBtn").addEventListener("click", resetQuiz);
 
-render();
+document.addEventListener('keydown', e => {
+  if ($('quiz').classList.contains('hidden') || $('modal').classList.contains('on')) return;
+  const it = S.items[S.cur]; if (S.checked[it.id]) return;
+  const k = 'abcd'.indexOf(e.key.toLowerCase()); const d = '1234'.indexOf(e.key);
+  const idx = k >= 0 ? k : d; if (idx >= 0) choose(it.perm[idx]);
+});
 </script>
 </body>
 </html>
